@@ -17,6 +17,11 @@ public class Model extends Observable {
     /** True iff game is ended. */
     private boolean gameOver;
 
+    /** Record the position when merge happens.
+     * Won't allow multiple merges happen to one tile.
+     * */
+    private int mergedPositionInColumn;
+
     /* Coordinate System: column C, row R of the board (where row 0,
      * column 0 is the lower-left corner of the board) will correspond
      * to board.tile(c, r).  Be careful! It works like (x, y) coordinates.
@@ -114,12 +119,59 @@ public class Model extends Observable {
         // for the tilt to the Side SIDE. If the board changed, set the
         // changed local variable to true.
 
+        board.setViewingPerspective(side);
+
+        for(int i = 0; i < board.size(); i++){
+            mergedPositionInColumn = -1; // refresh the value on each column
+            for(int j = board.size() - 2; j >= 0; j--){
+                if(moveTileAlongColumn(i, j)){
+                    changed = true;
+                }
+            }
+        }
+
+        board.setViewingPerspective(Side.NORTH);
+        
         checkGameOver();
         if (changed) {
             setChanged();
         }
         return changed;
     }
+
+    /** Move the tile at (c, r) along its column in UP direction
+    * */
+    private boolean moveTileAlongColumn(int c, int r){
+        Tile movingTile = board.tile(c, r);
+
+        if (movingTile == null){
+            return false;
+        }
+
+        int i = r;
+        while (i < board.size() - 1){
+            Tile tileAhead = board.tile(c, i + 1);
+            if(tileAhead != null){
+                break;
+            }
+            i++;
+        }
+
+        if(i >= board.size() - 1){ // move to the end
+            board.move(c, board.size() - 1, movingTile);
+        } else if(board.tile(c, i + 1).value() == movingTile.value()
+                && mergedPositionInColumn != i + 1){ // merge
+            score += 2 * movingTile.value(); // update score
+            board.move(c, i + 1, movingTile);
+            mergedPositionInColumn = i + 1;
+        } else if(i == r){ // stay
+            return false;
+        } else{
+            board.move(c, i, movingTile);
+        }
+        return true;
+    }
+
 
     /** Checks if the game is over and sets the gameOver variable
      *  appropriately.
