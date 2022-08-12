@@ -5,7 +5,7 @@ import java.util.Observable;
 
 
 /** The state of a game of 2048.
- *  @author TODO: YOUR NAME HERE
+ *  @author TODO: Gerzel Yu
  */
 public class Model extends Observable {
     /** Current contents of the board. */
@@ -137,7 +137,13 @@ public class Model extends Observable {
      *  Empty spaces are stored as null.
      * */
     public static boolean emptySpaceExists(Board b) {
-        // TODO: Fill in this function.
+        for(int i = 0; i < b.size(); i++){
+            for(int j = 0; j < b.size(); j++){
+                if(b.tile(i, j) == null){
+                    return true;
+                }
+            }
+        }
         return false;
     }
 
@@ -147,7 +153,15 @@ public class Model extends Observable {
      * given a Tile object t, we get its value with t.value().
      */
     public static boolean maxTileExists(Board b) {
-        // TODO: Fill in this function.
+        Tile tile;
+        for(int i = 0; i < b.size(); i++){
+            for(int j = 0; j < b.size(); j++){
+                tile = b.tile(i, j);
+                if(tile != null && tile.value() == MAX_PIECE){
+                    return true;
+                }
+            }
+        }
         return false;
     }
 
@@ -158,7 +172,26 @@ public class Model extends Observable {
      * 2. There are two adjacent tiles with the same value.
      */
     public static boolean atLeastOneMoveExists(Board b) {
-        // TODO: Fill in this function.
+        if(emptySpaceExists(b)){
+            return true;
+        }
+
+        Tile tile;
+        for(int i = 0; i < b.size(); i++){
+            for(int j = 0; j < b.size(); j++){
+                tile = b.tile(i, j);
+                if(i - 1 >= 0 && b.tile(i - 1, j).value() == tile.value()){
+                    return true;
+                } else if(i + 1 < b.size() && b.tile(i + 1, j).value() == tile.value()){
+                    return true;
+                } else if(j - 1 >= 0 && b.tile(i, j - 1).value() == tile.value()){
+                    return true;
+                } else if(j + 1 < b.size() && b.tile(i, j + 1).value() == tile.value()){
+                    return true;
+                }
+            }
+        }
+
         return false;
     }
 
