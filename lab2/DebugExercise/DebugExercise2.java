@@ -70,6 +70,9 @@ public class DebugExercise2 {
      * */
     public static int sumOfElementwiseMaxes(int[] a, int[] b) {
         int[] maxes = arrayMax(a, b);
+        if(maxes == null){
+            return 0;
+        }
         int sumofMaxes = arraySum(maxes);
         return sumofMaxes;
     }
