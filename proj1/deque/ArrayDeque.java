@@ -1,6 +1,6 @@
 package deque;
 
-public class ArrayList<T>{
+public class ArrayDeque<T> implements Deque<T>{
     private final int RFACTOR = 2;
     private final int MIN_CAPACITY = 8;
 
@@ -11,12 +11,13 @@ public class ArrayList<T>{
     private int nextFirst;
     private int nextLast;
 
-    public ArrayList(){
+    public ArrayDeque(){
         items = (T[]) new Object[capacity];
         nextFirst = 0;
         nextLast = 1;
     }
 
+    @Override
     public void addFirst(T item){
         if(size + 1 >= capacity){
             resize(capacity * RFACTOR);
@@ -27,6 +28,7 @@ public class ArrayList<T>{
         nextFirst = (capacity + (nextFirst - 1)) % capacity;
     }
 
+    @Override
     public void addLast(T item){
         if(size + 1 >= capacity){
             resize(capacity * RFACTOR);
@@ -36,6 +38,7 @@ public class ArrayList<T>{
         items[nextLast] = item;
         nextLast = (nextLast + 1) % capacity;
     }
+
 
     private void resize(int capacity){
         if(capacity <= MIN_CAPACITY){
@@ -56,14 +59,17 @@ public class ArrayList<T>{
     }
 
 
+    @Override
     public int size(){
         return size;
     }
 
+    @Override
     public boolean isEmpty(){
         return size == 0;
     }
 
+    @Override
     public T get(int index){
         if(index < 0 || size <= index){
             return null;
@@ -72,6 +78,7 @@ public class ArrayList<T>{
         return items[(nextFirst + 1 + index) % capacity];
     }
 
+    @Override
     public T removeFirst(){
         if(isEmpty()){
             return null;
@@ -87,6 +94,7 @@ public class ArrayList<T>{
         return value;
     }
 
+    @Override
     public T removeLast(){
         if(isEmpty()){
             return null;
@@ -102,5 +110,12 @@ public class ArrayList<T>{
         return value;
     }
 
-    
+    @Override
+    public void printDeque(){
+        for(int i = 0; i < size - 1; i++){
+            System.out.print(get(i) + " ");
+        }
+        System.out.print(get(size - 1) + "\n");
+    }
+
 }
