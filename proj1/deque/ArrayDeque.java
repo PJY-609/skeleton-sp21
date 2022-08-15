@@ -4,7 +4,7 @@ public class ArrayDeque<T> implements Deque<T>{
     private final int RFACTOR = 2;
     private final int MIN_CAPACITY = 8;
 
-    private int size;
+    private int size = 0;
     private int capacity = MIN_CAPACITY;
     private T[] items;
 
@@ -19,9 +19,9 @@ public class ArrayDeque<T> implements Deque<T>{
 
     @Override
     public void addFirst(T item){
-        if(size + 1 >= capacity){
-            resize(capacity * RFACTOR);
-        }
+//        if(size + 1 >= capacity){
+//            resize(capacity * RFACTOR);
+//        }
 
         size++;
         items[nextFirst] = item;
@@ -30,9 +30,9 @@ public class ArrayDeque<T> implements Deque<T>{
 
     @Override
     public void addLast(T item){
-        if(size + 1 >= capacity){
-            resize(capacity * RFACTOR);
-        }
+//        if(size + 1 >= capacity){
+//            resize(capacity * RFACTOR);
+//        }
 
         size++;
         items[nextLast] = item;
@@ -84,9 +84,9 @@ public class ArrayDeque<T> implements Deque<T>{
             return null;
         }
 
-        if((size - 1) < capacity / RFACTOR){
-            resize(capacity / RFACTOR);
-        }
+//        if((size - 1) < capacity / RFACTOR){
+//            resize(capacity / RFACTOR);
+//        }
 
         size--;
         T value = get(0);
@@ -100,9 +100,9 @@ public class ArrayDeque<T> implements Deque<T>{
             return null;
         }
 
-        if((size - 1) < capacity / RFACTOR){
-            resize(capacity / RFACTOR);
-        }
+//        if((size - 1) < capacity / RFACTOR){
+//            resize(capacity / RFACTOR);
+//        }
 
         size--;
         T value = get(nextLast - 1);
