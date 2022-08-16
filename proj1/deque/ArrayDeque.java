@@ -88,9 +88,9 @@ public class ArrayDeque<T> implements Deque<T>{
 //            resize(capacity / RFACTOR);
 //        }
 
-        size--;
         T value = get(0);
         nextFirst = (nextFirst + 1) % capacity;
+        size--;
         return value;
     }
 
@@ -104,9 +104,9 @@ public class ArrayDeque<T> implements Deque<T>{
 //            resize(capacity / RFACTOR);
 //        }
 
-        size--;
         T value = get(nextLast - 1);
         nextLast = (capacity + nextLast - 1) % capacity;
+        size--;
         return value;
     }
 

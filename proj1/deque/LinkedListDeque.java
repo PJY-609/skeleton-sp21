@@ -5,7 +5,7 @@ public class LinkedListDeque<T> implements Deque<T>{
     private Node<T> sentinelFront = new Node<T>();
     private Node<T> sentinelBack = new Node<T>();
 
-    public static class Node<T>{
+    private static class Node<T>{
         T value;
         Node<T> pred;
         Node<T> succ;
