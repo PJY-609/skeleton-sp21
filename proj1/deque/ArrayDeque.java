@@ -19,9 +19,9 @@ public class ArrayDeque<T> implements Deque<T>{
 
     @Override
     public void addFirst(T item){
-//        if(size + 1 >= capacity){
-//            resize(capacity * RFACTOR);
-//        }
+        if(size + 1 >= capacity){
+            resize(capacity * RFACTOR);
+        }
 
         size++;
         items[nextFirst] = item;
@@ -30,9 +30,9 @@ public class ArrayDeque<T> implements Deque<T>{
 
     @Override
     public void addLast(T item){
-//        if(size + 1 >= capacity){
-//            resize(capacity * RFACTOR);
-//        }
+        if(size + 1 >= capacity){
+            resize(capacity * RFACTOR);
+        }
 
         size++;
         items[nextLast] = item;
@@ -41,18 +41,18 @@ public class ArrayDeque<T> implements Deque<T>{
 
 
     private void resize(int capacity){
-        if(capacity <= MIN_CAPACITY){
+        if(capacity <= MIN_CAPACITY || capacity <= size){
             return;
         }
 
-        this.capacity = capacity;
-        T[] resized = (T[]) new Object[this.capacity];
+        T[] resized = (T[]) new Object[capacity];
 
         for(int i = 0; i < size; i++){
             resized[i] = get(i);
         }
 
-        nextFirst = capacity - 1;
+        this.capacity = capacity;
+        nextFirst = this.capacity - 1;
         nextLast = size;
 
         items = resized;
@@ -84,9 +84,9 @@ public class ArrayDeque<T> implements Deque<T>{
             return null;
         }
 
-//        if((size - 1) < capacity / RFACTOR){
-//            resize(capacity / RFACTOR);
-//        }
+        if(2 * (size - 1) < capacity / RFACTOR){
+            resize(capacity / RFACTOR);
+        }
 
         T value = get(0);
         nextFirst = (nextFirst + 1) % capacity;
@@ -100,11 +100,11 @@ public class ArrayDeque<T> implements Deque<T>{
             return null;
         }
 
-//        if((size - 1) < capacity / RFACTOR){
-//            resize(capacity / RFACTOR);
-//        }
+        if((size - 1) < capacity / RFACTOR){
+            resize(capacity / RFACTOR);
+        }
 
-        T value = get(nextLast - 1);
+        T value = get(size - 1);
         nextLast = (capacity + nextLast - 1) % capacity;
         size--;
         return value;
