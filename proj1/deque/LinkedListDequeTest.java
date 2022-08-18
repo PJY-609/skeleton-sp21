@@ -1,6 +1,10 @@
 package deque;
 
+import edu.princeton.cs.algs4.StdRandom;
 import org.junit.Test;
+
+import java.util.Iterator;
+
 import static org.junit.Assert.*;
 
 
@@ -134,6 +138,64 @@ public class LinkedListDequeTest {
             assertEquals("Should have the same value", i, (double) lld1.removeLast(), 0.0);
         }
 
+    }
 
+    @Test
+    public void testEquals(){
+        LinkedListDeque<Integer> deque1 = new LinkedListDeque<>();
+        LinkedListDeque<Integer> deque2 = new LinkedListDeque<>();
+
+        int N = 5000;
+        for (int i = 0; i < N; i += 1) {
+            int operationNumber = StdRandom.uniform(0, 4);
+            if (operationNumber == 0) {
+                int randVal = StdRandom.uniform(0, 100);
+                deque1.addLast(randVal);
+                deque2.addLast(randVal);
+            } else if (operationNumber == 1) {
+                int randVal = StdRandom.uniform(0, 100);
+                deque1.addFirst(randVal);
+                deque2.addFirst(randVal);
+            } else if (operationNumber == 3 && deque1.size() > 0 && deque2.size() > 0){
+                deque1.removeLast();
+                deque2.removeLast();
+            } else if (operationNumber == 4 && deque1.size() > 0 && deque2.size() > 0){
+                deque1.removeFirst();
+                deque2.removeFirst();
+            }
+        }
+
+        assertEquals(deque1, deque2);
+
+        deque1.addFirst(0);
+        assertNotEquals(deque1, deque2);
+    }
+
+    @Test
+    public void testIterator(){
+        LinkedListDeque<Integer> deque = new LinkedListDeque<>();
+
+        int N = 5000;
+        for (int i = 0; i < N; i += 1) {
+            int operationNumber = StdRandom.uniform(0, 4);
+            if (operationNumber == 0) {
+                int randVal = StdRandom.uniform(0, 100);
+                deque.addLast(randVal);
+            } else if (operationNumber == 1) {
+                int randVal = StdRandom.uniform(0, 100);
+                deque.addFirst(randVal);
+            } else if (operationNumber == 3 && deque.size() > 0){
+                deque.removeLast();
+            } else if (operationNumber == 4 && deque.size() > 0){
+                deque.removeFirst();
+            }
+        }
+
+        Iterator<Integer> iter = deque.iterator();
+
+        int i = 0;
+        while(iter.hasNext()){
+            assertEquals(iter.next(), deque.get(i++));
+        }
     }
 }

@@ -1,10 +1,12 @@
 package deque;
 
+import java.util.Iterator;
+
 public class ArrayDeque<T> implements Deque<T>{
     private final int RFACTOR = 2;
     private final int MIN_CAPACITY = 8;
 
-    private int size = 0;
+    protected int size = 0;
     private int capacity = MIN_CAPACITY;
     private T[] items;
 
@@ -64,10 +66,10 @@ public class ArrayDeque<T> implements Deque<T>{
         return size;
     }
 
-    @Override
-    public boolean isEmpty(){
-        return size == 0;
-    }
+//    @Override
+//    public boolean isEmpty(){
+//        return size == 0;
+//    }
 
     @Override
     public T get(int index){
@@ -118,4 +120,44 @@ public class ArrayDeque<T> implements Deque<T>{
         System.out.print(get(size - 1) + "\n");
     }
 
+    @Override
+    public boolean equals(Object o){
+        if(!(o instanceof ArrayDeque)){
+            return false;
+        }
+
+        ArrayDeque<?> deque = (ArrayDeque<?>) o;
+        if(size() != deque.size()){
+            return false;
+        }
+
+        for(int i = 0; i < size(); i++){
+            if(!get(i).equals(deque.get(i))){
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    public Iterator<T> iterator(){
+        return new Iterator<T>() {
+            private int index = 0;
+            @Override
+            public boolean hasNext() {
+                return 0 <= index && index < size;
+            }
+
+            @Override
+            public T next() {
+                if(hasNext()){
+                    T value = get(index);
+                    index++;
+                    return value;
+                }
+
+                return null;
+            }
+        };
+    }
 }
