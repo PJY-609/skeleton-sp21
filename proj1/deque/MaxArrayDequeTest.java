@@ -4,7 +4,6 @@ import edu.princeton.cs.algs4.StdRandom;
 import org.junit.Test;
 
 import java.util.Comparator;
-import java.util.Iterator;
 
 import static org.junit.Assert.assertEquals;
 
