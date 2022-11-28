@@ -5,6 +5,7 @@
 !**.json
 !**/pom.xml
 !**.md
+!**.pdf
 !.fatweleminus
 !.gitignore
 !library-sp21
