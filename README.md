@@ -12,6 +12,7 @@
 - [Asymtoptics 2](./reading/Asymtoptics2.md)
 - [Disjoint Set](./reading/Disjoint_Set.md)
 - [BST](./reading/BST.md)
+- [Git](./reading/Git.md)
 
 ## Lab
 - [Lab2: Debugging (due 01/29)](./lab2/Lab2.pdf)
