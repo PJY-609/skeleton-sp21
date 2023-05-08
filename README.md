@@ -14,11 +14,14 @@
 - [BST](./reading/BST.md)
 - [Git](./reading/Git.md)
 
+
 ## Lab
 - [Lab2: Debugging (due 01/29)](./lab2/Lab2.pdf)
 - [Lab3: Randomizing Testing and Timing](./lab3/Lab3.pdf)
 - [Lab4: Git and Debugging](./lab4/Lab4.pdf)
-
+- [Lab6: Canine Capers (file operations and serialization)](./lab6/)
+- [lab6 sp19: Union Find](./lab6_sp19/)
+- [lab7: BSTMap](./lab7/)
 
 ## Project
 - [Proj0: 2048](./proj0/Project0.pdf)
