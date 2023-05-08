@@ -1,7 +1,11 @@
 package bstmap;
 
+import edu.princeton.cs.algs4.BST;
+
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.Stack;
 
 public class BSTMap<K extends Comparable<K>,V> implements Map61B<K, V>{
 
@@ -17,114 +21,45 @@ public class BSTMap<K extends Comparable<K>,V> implements Map61B<K, V>{
         }
     }
 
-    private BSTNode root = null;
-    private BSTNode hot = null;
-    private int size = 0;
+    class KeyIterator implements Iterator<K>{
+        Stack<BSTNode> stack = new Stack<>();
 
-    public BSTMap(){}
+        public KeyIterator(BSTNode root) {
+            BSTNode node = root;
 
-    private void insert(K key, V value){
-        boolean found = find(key);
-        if(!found && hot == null){
-            root = new BSTNode(key, value);
-        }
-        else if(found && hot.right.key.equals(key)){
-            hot.right.value = value;
-        }
-        else if(found && hot.left.key.equals(key)){
-            hot.left.value = value;
-        }
-        else if(!found && hot.key.compareTo(key) < 0){
-            hot.right = new BSTNode(key, value);
-        }
-        else{
-            hot.left = new BSTNode(key, value);
-        }
-    }
-
-    private BSTNode delete(K key){
-        boolean found = find(key);
-
-        if(!found){
-            return null;
-        }
-
-        BSTNode node = hot.left.key.equals(key) ? hot.left : hot.right;
-
-        if(node.left == null && hot.left.key.equals(key)){
-            hot.left = node.right;
-            return node;
-        }
-        else if(node.left == null && hot.right.key.equals(key)){
-            hot.right = node.right;
-            return node;
-        }
-        else if(node.right == null && hot.left.key.equals(key)){
-            hot.left = node.left;
-            return node;
-        }
-        else if(node.right == null && hot.right.key.equals(key)){
-            hot.right = node.left;
-            return node;
-        }
-
-        BSTNode succ = findSucc(node);
-        if(succ == null){
-            return null;
-        }
-
-        K tmpKey = succ.key;
-        succ.key = node.key;
-        node.key = tmpKey;
-
-        V tmpValue = succ.value;
-        succ.value = node.value;
-        node.value = tmpValue;
-
-        if(succ.right != null){
-            hot.left = succ.right;
-            return succ;
-        }
-
-        hot.left = null;
-        return succ;
-    }
-
-    private BSTNode findSucc(BSTNode node){
-        if (node.right == null){
-            return null;
-        }
-
-        hot = node;
-        node = node.right;
-        while(node.left != null){
-            hot = node;
-            node = node.left;
-        }
-
-        return node;
-    }
-
-    private boolean find(K key){
-        if (size == 0){
-            return false;
-        }
-
-        hot = null;
-        BSTNode node = root;
-        while(node != null && !node.key.equals(key)){
-            hot = node;
-
-            if(node.key.compareTo(key) < 0){
-                node = node.right;
-            }
-            else{
+            while (node != null){
+                stack.push(node);
                 node = node.left;
             }
         }
 
-        return node != null;
+        public boolean hasNext() {
+            return !stack.empty();
+        }
+
+        public K next() {
+            BSTNode node = stack.pop();
+            K key = node.key;
+            node = node.right;
+
+            while(node != null){
+                stack.push(node);
+                node = node.left;
+            }
+
+            return key;
+        }
+
+        public void remove() {
+            throw new UnsupportedOperationException();
+        }
     }
+
+    private BSTNode root = null;
+
+    private int size = 0;
+
+    public BSTMap(){}
 
     @Override
     public void clear() {
@@ -134,17 +69,46 @@ public class BSTMap<K extends Comparable<K>,V> implements Map61B<K, V>{
 
     @Override
     public boolean containsKey(K key) {
-        return find(key);
+        if (size == 0){
+            return false;
+        }
+
+        BSTNode node = root;
+
+        while (node != null && !node.key.equals(key)){
+            if (node.key.compareTo(key) < 0){
+                node = node.right;
+            }
+            else {
+                node = node.left;
+            }
+        }
+
+        return (node != null);
     }
 
     @Override
     public V get(K key) {
-        boolean found = find(key);
-        if(!found){
+        if (size == 0){
             return null;
         }
 
-        return hot.left.key.equals(key) ? hot.left.value : hot.right.value;
+        BSTNode node = root;
+
+        while (node != null && !node.key.equals(key)) {
+            if (node.key.compareTo(key) < 0) {
+                node = node.right;
+            }
+            else {
+                node = node.left;
+            }
+        }
+
+        if (node == null){
+            return null;
+        }
+
+        return node.value;
     }
 
     @Override
@@ -154,28 +118,184 @@ public class BSTMap<K extends Comparable<K>,V> implements Map61B<K, V>{
 
     @Override
     public void put(K key, V value) {
-        insert(key, value);
+        size += 1;
+
+        if (root == null){
+            root = new BSTNode(key, value);
+            return;
+        }
+
+        BSTNode node = root;
+        BSTNode next = root;
+
+        while (next != null && !node.key.equals(key)){
+            node = next;
+            if (node.key.compareTo(key) < 0){
+                next = node.right;
+            }
+            else{
+                next = node.left;
+            }
+        }
+
+        if (node.key.compareTo(key) < 0){
+            node.right = new BSTNode(key, value);
+        }
+        else if(node.key.compareTo(key) > 0){
+            node.left = new BSTNode(key, value);
+        }
+        else{
+            node.value = value;
+        }
+
+
     }
 
     @Override
     public Set<K> keySet() {
-        return null;
+        Set<K> set = new HashSet<>();
+        for (K k : this) {
+            set.add(k);
+        }
+        return set;
     }
 
     @Override
     public V remove(K key) {
+        if (size == 0){
+            return null;
+        }
 
+        BSTNode prev = null;
+        BSTNode node = root;
 
-        return null;
+        while (node != null && !node.key.equals(key)) {
+            if (node.key.compareTo(key) < 0) {
+                prev = node;
+                node = node.right;
+            }
+            else {
+                prev = node;
+                node = node.left;
+            }
+        }
+
+        // not found
+        if (node == null){
+            return null;
+        }
+
+        size -= 1;
+
+        // remove node with both children
+        if (node.left != null && node.right != null){
+            prev = node;
+            BSTNode succ = node.right;
+
+            while (succ.left != null){
+                prev = succ;
+                succ = succ.left;
+            }
+
+            node.key = succ.key;
+            node.value = succ.value;
+            node = succ;
+        }
+
+        // remove leaf
+        if (node.left == null && node.right == null){
+            if (prev != null && prev.left != null && prev.left.key.equals(key)){
+                prev.left = null;
+            }
+            else if (prev != null && prev.right != null && prev.right.key.equals(key)){
+                prev.right = null;
+            }
+            return node.value;
+        }
+
+        // remove node with one child
+        if (prev == null){
+            root = (node.left != null) ? node.left : node.right;
+        }
+        else if (prev.left != null && prev.left.key.equals(key)){
+            prev.left = (node.left != null) ? node.left : node.right;
+        }
+        else if (prev.right != null && prev.right.key.equals(key)){
+            prev.right = (node.left != null) ? node.left : node.right;
+        }
+        return node.value;
     }
+
+
 
     @Override
     public V remove(K key, V value) {
-        return null;
+        if (size == 0){
+            return null;
+        }
+
+        BSTNode prev = null;
+        BSTNode node = root;
+
+        while (node != null && !node.key.equals(key)) {
+            if (node.key.compareTo(key) < 0) {
+                prev = node;
+                node = node.right;
+            }
+            else {
+                prev = node;
+                node = node.left;
+            }
+        }
+
+        // not found
+        if (node == null || node.value != value){
+            return null;
+        }
+
+        size -= 1;
+
+        // remove node with both children
+        if (node.left != null && node.right != null){
+            prev = node;
+            BSTNode succ = node.right;
+
+            while (succ.left != null){
+                prev = succ;
+                succ = succ.left;
+            }
+
+            node.key = succ.key;
+            node.value = succ.value;
+            node = succ;
+        }
+
+        // remove leaf
+        if (node.left == null && node.right == null){
+            if (prev != null && prev.left != null && prev.left.key.equals(key)){
+                prev.left = null;
+            }
+            else if (prev != null && prev.right != null && prev.right.key.equals(key)){
+                prev.right = null;
+            }
+            return node.value;
+        }
+
+        // remove node with one child
+        if (prev == null){
+            root = (node.left != null) ? node.left : node.right;
+        }
+        else if (prev.left != null && prev.left.key.equals(key)){
+            prev.left = (node.left != null) ? node.left : node.right;
+        }
+        else if (prev.right != null && prev.right.key.equals(key)){
+            prev.right = (node.left != null) ? node.left : node.right;
+        }
+        return node.value;
     }
 
     @Override
     public Iterator<K> iterator() {
-        return null;
+        return new KeyIterator(root);
     }
 }

@@ -6,7 +6,7 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 
 /** Tests of optional parts of lab 7. */
-public class TestBSTMapExtra {
+public class  TestBSTMapExtra {
 
     /*
     * Sanity test for keySet, only here because it's optional
