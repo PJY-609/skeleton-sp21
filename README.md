@@ -13,15 +13,18 @@
 - [Disjoint Set](./reading/Disjoint_Set.md)
 - [BST](./reading/BST.md)
 - [Git](./reading/Git.md)
-
+- [B-Tree](./reading/BTree.md)
+- [Red Black Tree](./reading/RedBlackTree.md)
+- [Hashing](./reading/Hashing.md)
+- [Heap / Priority Heap](./reading/Heap.md)
 
 ## Lab
 - [Lab2: Debugging (due 01/29)](./lab2/Lab2.pdf)
 - [Lab3: Randomizing Testing and Timing](./lab3/Lab3.pdf)
 - [Lab4: Git and Debugging](./lab4/Lab4.pdf)
-- [Lab6: Canine Capers (file operations and serialization)](./lab6/)
+- [Lab6: Canine Capers (file operations and serialization)](./lab6/lab6.pdf)
 - [lab6 sp19: Union Find](./lab6_sp19/)
-- [lab7: BSTMap](./lab7/)
+- [lab7: BSTMap](./lab7/lab7.pdf)
 
 ## Project
 - [Proj0: 2048](./proj0/Project0.pdf)
