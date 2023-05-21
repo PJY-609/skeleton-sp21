@@ -28,7 +28,7 @@
 
 ## Project
 - [Proj0: 2048](./proj0/Project0.pdf)
-- [Proj1: Data Structures](./proj1/Project0.pdf)
+- [Proj1: Data Structures](./proj1/Project1.pdf)
 - [Proj1EC: Testing](./proj1/Project1.pdf)
 
 
