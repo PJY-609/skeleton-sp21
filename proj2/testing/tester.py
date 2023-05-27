@@ -1,4 +1,4 @@
-import sys, re
+import sys, re, importlib
 from subprocess import \
      check_output, PIPE, STDOUT, DEVNULL, CalledProcessError, TimeoutExpired
 from os.path import abspath, basename, dirname, exists, join, splitext
@@ -6,6 +6,7 @@ from getopt import getopt, GetoptError
 from os import chdir, environ, getcwd, mkdir, remove, access, W_OK
 from shutil import copyfile, rmtree
 from math import log
+
 
 SHORT_USAGE = """\
 Usage: python3 tester.py OPTIONS TEST.in ...
@@ -88,7 +89,7 @@ faulty TEST.in files."""
 
 TIMEOUT = 10
 
-JAVA_COMMAND = "java -ea"
+JAVA_COMMAND = "java -ea -Dfile.encoding=UTF-8"
 GITLET_CLASS = "gitlet.Main"
 JVM_OPTIONS = "-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5005"
 
@@ -114,7 +115,7 @@ def Group(n):
 
 def contents(filename):
     try:
-        with open(filename) as inp:
+        with open(filename, encoding= "utf-8") as inp:
             return inp.read()
     except FileNotFoundError:
         return None
@@ -254,7 +255,7 @@ def chop_nl(s):
 def line_reader(f, prefix):
     n = 0
     try:
-        with open(f) as inp:
+        with open(f, encoding= "utf-8") as inp:
             while True:
                 L = inp.readline()
                 if L == '':

@@ -8,7 +8,7 @@
 SHELL = /bin/bash
 
 # Flags to Java interpreter: check assertions
-JFLAGS = -ea
+JFLAGS = -ea -Dfile.encoding=UTF-8
 
 # See comment in ../Makefile
 PYTHON = python3

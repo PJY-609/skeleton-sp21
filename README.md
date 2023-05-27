@@ -41,3 +41,4 @@
 - [Disc5: Polymorphism, Iterators, and Iterables](./disc/disc5/disc5/disc05sol.pdf)
 - [Disc5: Polymorphism, Iterators, and Iterables Exam Prep](./disc/disc5/disc5_exam_prep/examprep05sol.pdf)
 - [Disc6: Disjoint Sets and Asymptotics](./disc/disc6/disc06sol.pdf)
+- [Disc8: ]

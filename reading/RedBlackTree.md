@@ -84,7 +84,7 @@ ________________________________
 S    -----> E|S
 ```
 
-- If there is aright leaning “3-node”, we have a Left Leaning Violation
+- If there is a right leaning “3-node”, we have a Left Leaning Violation
 	- Rotate left the appropriate node to fix.
 
 ```

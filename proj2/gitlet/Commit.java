@@ -4,11 +4,13 @@ package gitlet;
 import java.io.File;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 
 import java.util.Date; // TODO: You'll likely use this in this class
-import java.util.HashMap;
-import java.util.TimeZone;
 
 import static gitlet.Utils.readObject;
 import static gitlet.Utils.writeObject;
@@ -35,36 +37,59 @@ public class Commit implements Serializable {
 
     private final String timestamp;
 
-    private final HashMap<String, String> tree;
+    private final TreeMap<String, String> trackedFiles;
 
-    private final String parentID;
+    private final List<String> parentIDs = new LinkedList<>();
 
     /* TODO: fill in the rest of this class. */
 
     public Commit(){
         message = "initial commit";
         timestamp = "Thu Jan 1 00:00:00 1970 -0800";
-        tree = new HashMap<>();
+        trackedFiles = new TreeMap<>();
         ID = Utils.sha1(toString());
-        parentID = null;
     }
 
-    public Commit(String message, Commit parentCommit, Stage stage){
+
+    public Commit(String message, Commit currentCommit, Commit givenCommit, Stage stage){
         this.message = message;
 
-        Date date = new Date();
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("EEE MMM d HH:mm:ss yyyy Z");
-        timestamp = simpleDateFormat.format(date);
+        ZonedDateTime date = ZonedDateTime.now();
+        Locale locale = new Locale("en");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEE MMM d HH:mm:ss yyyy Z").withLocale(locale);
+        timestamp = date.format(formatter);
 
         ID = Utils.sha1(toString());
 
-        parentID = parentCommit.ID;
-
-        tree = new HashMap<>(parentCommit.tree);
-
-        for(String fileName: stage.fileSet()){
-            tree.put(fileName, stage.getBlobID(fileName));
+        parentIDs.add(currentCommit.ID);
+        if(givenCommit != null){
+            parentIDs.add(givenCommit.ID);
         }
+
+        trackedFiles = new TreeMap<>(currentCommit.trackedFiles);
+
+        for(String fileName: stage.addedFileSet()){
+            trackedFiles.put(fileName, stage.getBlobID(fileName));
+        }
+
+        for (String fileName: stage.removedFiles()) {
+            trackedFiles.remove(fileName);
+        }
+    }
+
+    @Override
+    public boolean equals(Object o){
+        if (o == this) {
+            return true;
+        }
+
+        if (!(o instanceof Commit)) {
+            return false;
+        }
+
+        Commit c = (Commit) o;
+
+        return ID.equals(c.getID());
     }
 
     @Override
@@ -80,28 +105,48 @@ public class Commit implements Serializable {
                 "%s\n\n", ID, timestamp, message);
     }
 
-//    public String sha1Code(){
-//        return Utils.sha1(toString());
-//    }
 
-    public boolean containsFile(String fileName, String blobID){
-        return tree != null && tree.containsKey(fileName) && tree.get(fileName).equals(blobID);
+    public boolean isTrackedContent(String fileName, String blobID){
+        return trackedFiles.containsKey(fileName) && trackedFiles.get(fileName).equals(blobID);
     }
 
     public String getID(){
         return ID;
     }
 
-    public String getParentID(){
-        return parentID;
+    public String getFirstParentID(){
+        if(parentIDs.isEmpty()){
+            return null;
+        }
+
+        return parentIDs.get(0);
+    }
+
+    public boolean isInitCommit(){
+        return parentIDs.isEmpty();
+    }
+
+    public Iterator<String> getParentIDs(){
+        return parentIDs.iterator();
     }
 
     public String getBlobID(String fileName){
-        return tree.get(fileName);
+        return trackedFiles.get(fileName);
     }
 
-    public boolean containsFile(String fileName){
-        return tree != null && tree.containsKey(fileName);
+    public boolean isTrackedFile(String fileName){
+        return trackedFiles.containsKey(fileName);
     }
 
+    public boolean hasMessage(String message){
+        return this.message.equals(message);
+    }
+
+    public Set<String> trackedFileSet(){
+        return trackedFiles.keySet();
+    }
+
+    public Map<String, String> trackedFiles(){
+        return new TreeMap<>(trackedFiles);
+    }
 }

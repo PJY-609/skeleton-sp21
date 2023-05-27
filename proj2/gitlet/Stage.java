@@ -2,39 +2,53 @@ package gitlet;
 
 import java.io.File;
 import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Set;
+import java.util.*;
 
 public class Stage implements Serializable {
-    private HashMap<String, String> stagedFiles = new HashMap<>();
+    private TreeMap<String, String> addedFiles = new TreeMap<>();
+    private TreeSet<String> removedFiles = new TreeSet<>();
 
     public Stage(){}
 
-    public void removeFile(String fileName){
-        stagedFiles.remove(fileName);
+    public void unstageForAddition(String fileName){
+        addedFiles.remove(fileName);
     }
 
     public String getBlobID(String fileName){
-        return stagedFiles.get(fileName);
+        return addedFiles.get(fileName);
     }
 
-    public void addFile(String fileName, String blobID){
-        stagedFiles.put(fileName, blobID);
+    public void stageForAddition(String fileName, String blobID){
+        removedFiles.remove(fileName);
+        addedFiles.put(fileName, blobID);
     }
 
-    public boolean containsFile(String fileName){
-        return stagedFiles.containsKey(fileName);
+    public boolean isAddedFile(String fileName){
+        return addedFiles.containsKey(fileName);
     }
 
-    public boolean isEmpty(){
-        return stagedFiles.isEmpty();
+    public boolean noAddedFiles(){
+        return addedFiles.isEmpty();
     }
 
     public void clear(){
-        stagedFiles.clear();
+        addedFiles.clear();
+        removedFiles.clear();
     }
 
-    public Set<String> fileSet(){
-        return stagedFiles.keySet();
+    public Set<String> addedFileSet(){
+        return addedFiles.keySet();
     }
+
+    public Map<String, String> addedFiles() {return new TreeMap<>(addedFiles);}
+
+    public void stageForRemoval(String fileName){
+        removedFiles.add(fileName);
+    }
+
+    public Set<String> removedFiles() {
+        return new TreeSet<>(removedFiles);
+    }
+
+    public boolean noRemovedFiles(){ return removedFiles.isEmpty(); }
 }

@@ -23,21 +23,84 @@ public class Main {
             case "add":
                 // TODO: handle the `add [filename]` command
                 validateNumArgs(args, 2);
+                Repository.validateInitialization();
                 Repository.addFile(args[1]);
                 break;
             // TODO: FILL THE REST IN
             case "commit":
                 validateNumArgs(args, 2);
+                Repository.validateInitialization();
                 Repository.makeCommit(args[1]);
                 break;
             case "checkout":
                 validateNumArgs(args, 2, 3, 4);
+                Repository.validateInitialization();
                 validateCheckoutCommand(args);
                 Repository.checkout(args);
                 break;
             case "log":
                 validateNumArgs(args, 1);
+                Repository.validateInitialization();
                 Repository.printLog();
+                break;
+            case "rm":
+                validateNumArgs(args, 2);
+                Repository.validateInitialization();
+                Repository.removeFile(args[1]);
+                break;
+            case "global-log":
+                validateNumArgs(args, 1);
+                Repository.validateInitialization();
+                Repository.printGlobalLog();
+                break;
+            case "find":
+                validateNumArgs(args, 2);
+                Repository.validateInitialization();
+                Repository.findCommitMessage(args[1]);
+                break;
+            case "branch":
+                validateNumArgs(args, 2);
+                Repository.validateInitialization();
+                Repository.createBranch(args[1]);
+                break;
+            case "rm-branch":
+                validateNumArgs(args, 2);
+                Repository.validateInitialization();
+                Repository.removeBranch(args[1]);
+                break;
+            case "reset":
+                validateNumArgs(args, 2);
+                Repository.validateInitialization();
+                Repository.reset(args[1]);
+                break;
+            case "status":
+                validateNumArgs(args, 1);
+                Repository.validateInitialization();
+                Repository.printStatus();
+                break;
+            case "merge":
+                validateNumArgs(args, 2);
+                Repository.mergeBranches(args[1]);
+                break;
+            case "add-remote":
+                validateNumArgs(args, 3);
+                Repository.addRemote(args[1], args[2]);
+                break;
+            case "rm-remote":
+                validateNumArgs(args, 2);
+                Repository.removeRemote(args[1]);
+                break;
+            case "push":
+                validateNumArgs(args, 3);
+                Repository.pushToRemote(args[1], args[2]);
+                break;
+            case "fetch":
+                validateNumArgs(args, 3);
+                Repository.fetchFromRemote(args[1], args[2]);
+                break;
+            case "pull":
+                validateNumArgs(args, 3);
+                Repository.pullFromRemote(args[1], args[2]);
                 break;
             default:
                 Utils.message("No command with that name exists.");
@@ -47,11 +110,11 @@ public class Main {
     }
 
     private static void validateCheckoutCommand(String[] args){
-        boolean noConnectionSign0 = args.length == 2 && !args[0].equals("--");
-        boolean noConnectionSign1 = args.length == 3 && !args[1].equals("--");
+        boolean noConnectionSign0 = args.length == 3 && !args[1].equals("--");
+        boolean noConnectionSign1 = args.length == 4 && !args[2].equals("--");
 
         if(noConnectionSign0 || noConnectionSign1){
-            Utils.message("No command with that name exists.");
+            Utils.message("Incorrect operands.");
             System.exit(0);
         }
     }
