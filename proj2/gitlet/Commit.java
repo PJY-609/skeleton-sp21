@@ -1,29 +1,17 @@
 package gitlet;
 
-// TODO: any imports you need here
-import java.io.File;
 import java.io.Serializable;
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
-import java.util.Date; // TODO: You'll likely use this in this class
-
-import static gitlet.Utils.readObject;
-import static gitlet.Utils.writeObject;
-
 /** Represents a gitlet commit object.
- *  TODO: It's a good idea to give a description here of what else this Class
- *  does at a high level.
+
  *
- *  @author TODO
+ *  @author Juezhao Yu
  */
 public class Commit implements Serializable {
     /**
-     * TODO: add instance variables here.
      *
      * List all instance variables of the Commit class here with a useful
      * comment above them describing what that variable represents and how that
@@ -41,9 +29,8 @@ public class Commit implements Serializable {
 
     private final List<String> parentIDs = new LinkedList<>();
 
-    /* TODO: fill in the rest of this class. */
 
-    public Commit(){
+    public Commit() {
         message = "initial commit";
         timestamp = "Thu Jan 1 00:00:00 1970 -0800";
         trackedFiles = new TreeMap<>();
@@ -51,7 +38,7 @@ public class Commit implements Serializable {
     }
 
 
-    public Commit(String message, Commit currentCommit, Commit givenCommit, Stage stage){
+    public Commit(String message, Commit currentCommit, Commit givenCommit, Stage stage) {
         this.message = message;
 
         ZonedDateTime date = ZonedDateTime.now();
@@ -62,13 +49,13 @@ public class Commit implements Serializable {
         ID = Utils.sha1(toString());
 
         parentIDs.add(currentCommit.ID);
-        if(givenCommit != null){
+        if (givenCommit != null) {
             parentIDs.add(givenCommit.ID);
         }
 
         trackedFiles = new TreeMap<>(currentCommit.trackedFiles);
 
-        for(String fileName: stage.addedFileSet()){
+        for (String fileName: stage.addedFileSet()) {
             trackedFiles.put(fileName, stage.getBlobID(fileName));
         }
 
@@ -78,7 +65,7 @@ public class Commit implements Serializable {
     }
 
     @Override
-    public boolean equals(Object o){
+    public boolean equals(Object o) {
         if (o == this) {
             return true;
         }
@@ -97,7 +84,7 @@ public class Commit implements Serializable {
         return String.format("Commit for %s at %s", message, timestamp);
     }
 
-    public String logInfo(){
+    public String logInfo() {
         return String.format(
                 "===\n" +
                 "commit %s\n" +
@@ -106,16 +93,16 @@ public class Commit implements Serializable {
     }
 
 
-    public boolean isTrackedContent(String fileName, String blobID){
+    public boolean isTrackedContent(String fileName, String blobID) {
         return trackedFiles.containsKey(fileName) && trackedFiles.get(fileName).equals(blobID);
     }
 
-    public String getID(){
+    public String getID() {
         return ID;
     }
 
-    public String getFirstParentID(){
-        if(parentIDs.isEmpty()){
+    public String getFirstParentID() {
+        if (parentIDs.isEmpty()) {
             return null;
         }
 
@@ -134,11 +121,11 @@ public class Commit implements Serializable {
         return trackedFiles.get(fileName);
     }
 
-    public boolean isTrackedFile(String fileName){
+    public boolean isTrackedFile(String fileName) {
         return trackedFiles.containsKey(fileName);
     }
 
-    public boolean hasMessage(String message){
+    public boolean hasMessage(String message) {
         return this.message.equals(message);
     }
 

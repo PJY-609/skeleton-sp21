@@ -1,7 +1,7 @@
 package gitlet;
 
 /** Driver class for Gitlet, a subset of the Git version-control system.
- *  @author TODO
+ *  @author Juezhao YU
  */
 public class Main {
 
@@ -9,24 +9,20 @@ public class Main {
      *  <COMMAND> <OPERAND1> <OPERAND2> ... 
      */
     public static void main(String[] args) {
-        // TODO: what if args is empty?
 
         validateNonEmptyArgs(args);
 
         String firstArg = args[0];
-        switch(firstArg) {
+        switch (firstArg) {
             case "init":
-                // TODO: handle the `init` command
                 validateNumArgs(args, 1);
                 Repository.initialize();
                 break;
             case "add":
-                // TODO: handle the `add [filename]` command
                 validateNumArgs(args, 2);
                 Repository.validateInitialization();
                 Repository.addFile(args[1]);
                 break;
-            // TODO: FILL THE REST IN
             case "commit":
                 validateNumArgs(args, 2);
                 Repository.validateInitialization();
@@ -109,11 +105,11 @@ public class Main {
         }
     }
 
-    private static void validateCheckoutCommand(String[] args){
+    private static void validateCheckoutCommand(String[] args) {
         boolean noConnectionSign0 = args.length == 3 && !args[1].equals("--");
         boolean noConnectionSign1 = args.length == 4 && !args[2].equals("--");
 
-        if(noConnectionSign0 || noConnectionSign1){
+        if (noConnectionSign0 || noConnectionSign1) {
             Utils.message("Incorrect operands.");
             System.exit(0);
         }
@@ -122,8 +118,8 @@ public class Main {
     private static void validateNumArgs(String[] args, int... nums) {
         boolean matched = false;
 
-        for(int n: nums){
-            if (args.length == n){
+        for (int n: nums) {
+            if (args.length == n) {
                 matched = true;
                 break;
             }
@@ -135,8 +131,8 @@ public class Main {
         }
     }
 
-    private static void validateNonEmptyArgs(String[] args){
-        if (args.length == 0){
+    private static void validateNonEmptyArgs(String[] args) {
+        if (args.length == 0) {
             Utils.message("Please enter a command.");
             System.exit(0);
         }
