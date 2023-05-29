@@ -757,13 +757,13 @@ public class Repository {
         String currentContent = "";
         if (currentCommit.getBlobID(fileName) != null) {
             currentContent = readContentsAsString(join(BLOB_DIR, currentCommit.getBlobID(fileName)));
-//            currentContent += "\n";
+            currentContent += System.getProperty("line.separator");
         }
 
         String givenContent = "";
         if (givenCommit.getBlobID(fileName) != null) {
             givenContent = readContentsAsString(join(BLOB_DIR, givenCommit.getBlobID(fileName)));
-//            givenContent += "\n";
+            givenContent += System.getProperty("line.separator");
         }
 
         String contentInConflict = "<<<<<<< HEAD"
