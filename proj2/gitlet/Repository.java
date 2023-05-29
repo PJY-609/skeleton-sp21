@@ -32,7 +32,9 @@ public class Repository {
     private static final File REMOTE_FILE = join(GITLET_DIR, "remotes");
 
 
-    static class StringMap extends TreeMap<String, String> {}
+    static class StringMap extends TreeMap<String, String> {
+
+    }
 
     /**
      * COMMAND: init
@@ -46,7 +48,7 @@ public class Repository {
      * (they will all have the same UID) and all commits in all repositories will trace back to it.
      * */
     public static void initialize() {
-        if (GITLET_DIR.exists()){
+        if (GITLET_DIR.exists()) {
             Utils.message("A Gitlet version-control system already exists in the current directory.");
             System.exit(0);
         }
@@ -86,8 +88,7 @@ public class Repository {
 
         if (headCommit.isTrackedContent(fileName, blobID)) {
             stage.unstageForAddition(fileName);
-        }
-        else {
+        } else {
             stage.stageForAddition(fileName, blobID);
         }
 
@@ -170,11 +171,9 @@ public class Repository {
     public static void checkout(String[] args) {
         if (args.length == 3) {
             checkoutFile(args[2]);
-        }
-        else if (args.length == 4) {
+        } else if (args.length == 4) {
             checkoutFile(args[1], args[3]);
-        }
-        else {
+        } else {
             checkoutBranch(args[1]);
         }
     }
@@ -309,7 +308,9 @@ public class Repository {
         }
 
         for (String fileName: fileNames) {
-            if (!currentCommit.isTrackedFile(fileName) && (stage.isRemovedFiles(fileName) || stage.isAddedFile(fileName))) {
+            if (!currentCommit.isTrackedFile(fileName)
+                    && (stage.isRemovedFiles(fileName)
+                    || stage.isAddedFile(fileName))) {
                 Utils.message("There is an untracked file in the way; delete it, or add and commit it first.");
                 System.exit(0);
             }
@@ -347,8 +348,7 @@ public class Repository {
 
             if (commit.isInitCommit()) {
                 commit = null;
-            }
-            else {
+            } else {
                 commit = readCommit(commit.getFirstParentID());
             }
         }
@@ -505,8 +505,7 @@ public class Repository {
         for (String fileName: stagedFiles.keySet()) {
             if (!workingFiles.containsKey(fileName)) {
                 unstagedFiles.put(fileName, "deleted");
-            }
-            else if (!stagedFiles.get(fileName).equals(workingFiles.get(fileName))) {
+            } else if (!stagedFiles.get(fileName).equals(workingFiles.get(fileName))) {
                 unstagedFiles.put(fileName, "modified");
             }
         }
@@ -1176,7 +1175,7 @@ public class Repository {
 
             for (Iterator<String> it = commit.getParentIDs(); it.hasNext(); ) {
                 String parentID = it.next();
-                if(!visited.contains(parentID)){
+                if (!visited.contains(parentID)) {
                     queue.add(parentID);
                 }
             }
