@@ -754,13 +754,13 @@ public class Repository {
             return null;
         }
 
-        String currentContent = "";
+        String currentContent = "\r";
         if (currentCommit.getBlobID(fileName) != null) {
             currentContent = readContentsAsString(join(BLOB_DIR, currentCommit.getBlobID(fileName)));
 //            currentContent += "\n";
         }
 
-        String givenContent = "";
+        String givenContent = "\r";
         if (givenCommit.getBlobID(fileName) != null) {
             givenContent = readContentsAsString(join(BLOB_DIR, givenCommit.getBlobID(fileName)));
 //            givenContent += "\n";
