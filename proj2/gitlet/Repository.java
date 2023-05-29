@@ -311,6 +311,8 @@ public class Repository {
             if (!currentCommit.isTrackedFile(fileName)
                     && (stage.isRemovedFiles(fileName)
                     || stage.isAddedFile(fileName))) {
+                stage.clear();
+                writeObject(STAGE_FILE, stage);
                 Utils.message("There is an untracked file in the way; delete it, or add and commit it first.");
                 System.exit(0);
             }
@@ -643,22 +645,6 @@ public class Repository {
         }
     }
 
-//    private static void removeFilesAtMerge(Commit currentCommit, Commit givenCommit, Commit splitCommit){
-//        // Any files present at the split point, unmodified in the current branch, and
-//        // absent in the given branch should be removed (and untracked).
-//        for(String fileName: currentCommit.trackedFileSet()){
-//            boolean isTrackedAtSplit = splitCommit.isTrackedFile(fileName);
-//            boolean isUntrackedAtGiven = !givenCommit.isTrackedFile(fileName);
-//            boolean notModifiedAtCurrent = Objects.equals(splitCommit.getBlobID(fileName), currentCommit.getBlobID(fileName));
-//            if(isTrackedAtSplit && isUntrackedAtGiven && notModifiedAtCurrent){
-//                restrictedDelete(join(CWD, fileName));
-//                Stage stage = readObject(STAGE_FILE, Stage.class);
-//                stage.stageForRemoval(fileName);
-//                writeObject(STAGE_FILE, stage);
-//            }
-//        }
-//    }
-
     private static boolean stageFilesAtMerge(Commit currentCommit, Commit givenCommit, Commit splitCommit) {
         boolean hasAnyMergeConflict = false;
 
@@ -766,7 +752,7 @@ public class Repository {
             givenContent += System.getProperty("line.separator");
         }
 
-        String contentInConflict = "<<<<<<< HEAD"
+        return "<<<<<<< HEAD"
                 + System.getProperty("line.separator")
                 + currentContent
                 + "======="
@@ -774,7 +760,6 @@ public class Repository {
                 + givenContent
                 + ">>>>>>>";
 
-        return contentInConflict;
     }
 
     private static String getSplitCommit(String branchName1, String branchName2) {
