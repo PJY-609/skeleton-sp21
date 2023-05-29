@@ -766,7 +766,15 @@ public class Repository {
 //            givenContent += "\n";
         }
 
-        return String.format("<<<<<<< HEAD\r%s=======\r%s>>>>>>>", currentContent, givenContent);
+        String contentInConflict = "<<<<<<< HEAD"
+                + System.getProperty("line.separator")
+                + currentContent
+                + "======="
+                + System.getProperty("line.separator")
+                + givenContent
+                + ">>>>>>>";
+
+        return contentInConflict;
     }
 
     private static String getSplitCommit(String branchName1, String branchName2) {
