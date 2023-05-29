@@ -80,16 +80,15 @@ public class Commit implements Serializable {
     }
 
     @Override
-    public String toString(){
+    public String toString() {
         return String.format("Commit for %s at %s", message, timestamp);
     }
 
     public String logInfo() {
-        return String.format(
-                "===\n" +
-                "commit %s\n" +
-                "Date: %s\n" +
-                "%s\n\n", ID, timestamp, message);
+        return String.format("===\n"
+                        + "commit %s\n"
+                        + "Date: %s\n"
+                + "%s\n\n", ID, timestamp, message);
     }
 
 
@@ -109,15 +108,15 @@ public class Commit implements Serializable {
         return parentIDs.get(0);
     }
 
-    public boolean isInitCommit(){
+    public boolean isInitCommit() {
         return parentIDs.isEmpty();
     }
 
-    public Iterator<String> getParentIDs(){
+    public Iterator<String> getParentIDs() {
         return parentIDs.iterator();
     }
 
-    public String getBlobID(String fileName){
+    public String getBlobID(String fileName) {
         return trackedFiles.get(fileName);
     }
 
@@ -129,11 +128,11 @@ public class Commit implements Serializable {
         return this.message.equals(message);
     }
 
-    public Set<String> trackedFileSet(){
+    public Set<String> trackedFileSet() {
         return trackedFiles.keySet();
     }
 
-    public Map<String, String> trackedFiles(){
+    public Map<String, String> trackedFiles() {
         return new TreeMap<>(trackedFiles);
     }
 }

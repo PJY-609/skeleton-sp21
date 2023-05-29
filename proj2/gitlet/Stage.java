@@ -1,6 +1,5 @@
 package gitlet;
 
-import java.io.File;
 import java.io.Serializable;
 import java.util.*;
 
@@ -8,7 +7,9 @@ public class Stage implements Serializable {
     private final TreeMap<String, String> addedFiles = new TreeMap<>();
     private final TreeSet<String> removedFiles = new TreeSet<>();
 
-    public Stage() {}
+    public Stage() {
+
+    }
 
     public void unstageForAddition(String fileName) {
         addedFiles.remove(fileName);

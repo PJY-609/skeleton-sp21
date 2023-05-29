@@ -32,7 +32,6 @@ public class Repository {
     private static final File REMOTE_FILE = join(GITLET_DIR, "remotes");
 
 
-
     static class StringMap extends TreeMap<String, String> {}
 
     /**
@@ -415,10 +414,9 @@ public class Repository {
         String headBranchName = readObject(HEAD_FILE, String.class);
         System.out.println("=== Branches ===");
         for (String branchName: branches.keySet()) {
-            if(branchName.equals(headBranchName)){
+            if (branchName.equals(headBranchName)) {
                 System.out.printf("*%s\n", branchName);
-            }
-            else {
+            } else {
                 System.out.printf("%s\n", branchName);
             }
         }
@@ -492,13 +490,12 @@ public class Repository {
         for (String fileName: trackedFiles.keySet()) {
             boolean isDeleted = !workingFiles.containsKey(fileName);
             boolean notStagedForRemoval = !removedFiles.contains(fileName);
-            boolean isModified = workingFiles.containsKey(fileName) &&
-                    !trackedFiles.get(fileName).equals(workingFiles.get(fileName));
+            boolean isModified = workingFiles.containsKey(fileName)
+                    && !trackedFiles.get(fileName).equals(workingFiles.get(fileName));
             boolean notStagedForAddition = !stagedFiles.containsKey(fileName);
             if (isDeleted && notStagedForRemoval) {
                 unstagedFiles.put(fileName, "deleted");
-            }
-            else if (isModified && notStagedForAddition) {
+            }  else if (isModified && notStagedForAddition) {
                 unstagedFiles.put(fileName, "modified");
             }
         }
@@ -672,26 +669,23 @@ public class Repository {
             boolean notModifiedAtCurrent = Objects.equals(splitCommit.getBlobID(fileName), currentCommit.getBlobID(fileName));
             boolean notModifiedAtGiven = Objects.equals(currentCommit.getBlobID(fileName), givenCommit.getBlobID(fileName));
 
-            // Any files present at the split point, unmodified in the current branch, and
-            // absent in the given branch should be removed (and untracked).
             if (isTrackedAtSplit && !isTrackedAtGiven && notModifiedAtCurrent) {
+                // Any files present at the split point, unmodified in the current branch, and
+                // absent in the given branch should be removed (and untracked).
                 Stage stage = readObject(STAGE_FILE, Stage.class);
                 stage.stageForRemoval(fileName);
                 writeObject(STAGE_FILE, stage);
-            }
-            // Any files that were not present at the split point
-            // and are present only in the current branch should remain as they are.
-            else if (!isTrackedAtSplit && !isTrackedAtGiven) {
+            } else if (!isTrackedAtSplit && !isTrackedAtGiven) {
+                // Any files that were not present at the split point
+                // and are present only in the current branch should remain as they are.
                 continue;
-            }
-            // Any files that have been modified in the current branch
-            // but not in the given branch since the split point should stay as they are.
-            else if (!notModifiedAtCurrent && isTrackedAtGiven && notModifiedAtGiven) {
+            } else if (!notModifiedAtCurrent && isTrackedAtGiven && notModifiedAtGiven) {
+                // Any files that have been modified in the current branch
+                // but not in the given branch since the split point should stay as they are.
                 continue;
-            }
-            // Any files modified in different ways in the current and given branches are in conflict.
-            // the contents of current file are changed and the given file is deleted,
-            else if (!notModifiedAtCurrent && !isTrackedAtGiven) {
+            } else if (!notModifiedAtCurrent && !isTrackedAtGiven) {
+                // Any files modified in different ways in the current and given branches are in conflict.
+                // the contents of current file are changed and the given file is deleted,
                 String mergedContent = createMergedContentInConflict(currentCommit, givenCommit, fileName);
 
                 String blobID = sha1(mergedContent);
@@ -713,36 +707,32 @@ public class Repository {
             boolean notModifiedAtGiven = Objects.equals(splitCommit.getBlobID(fileName), givenCommit.getBlobID(fileName));
             boolean noConflicts = Objects.equals(currentCommit.getBlobID(fileName), givenCommit.getBlobID(fileName));
 
-            // Any files that have been modified in the given branch since the split point,
-            // but not modified in the current branch since the split point
-            // should be changed to their versions in the given branch
             if ((isTrackedAtSplit && isTrackedAtCurrent && notModifiedAtCurrent && !notModifiedAtGiven)) {
+                // Any files that have been modified in the given branch since the split point,
+                // but not modified in the current branch since the split point
+                // should be changed to their versions in the given branch
                 Stage stage = readObject(STAGE_FILE, Stage.class);
                 stage.stageForAddition(fileName, givenCommit.getBlobID(fileName));
                 writeObject(STAGE_FILE, stage);
-            }
-            // Any files that were not present at the split point and are present only in the given branch
-            // should be checked out and staged.
-            else if (!isTrackedAtSplit && !isTrackedAtCurrent) {
+            } else if (!isTrackedAtSplit && !isTrackedAtCurrent) {
+                // Any files that were not present at the split point and are present only in the given branch
+                // should be checked out and staged.
                 Stage stage = readObject(STAGE_FILE, Stage.class);
                 stage.stageForAddition(fileName, givenCommit.getBlobID(fileName));
                 writeObject(STAGE_FILE, stage);
-            }
-            // Any files present at the split point, unmodified in the given branch,
-            // and absent in the current branch should remain absent.
-            else if (isTrackedAtSplit && !isTrackedAtCurrent && notModifiedAtGiven) {
+            } else if (isTrackedAtSplit && !isTrackedAtCurrent && notModifiedAtGiven) {
+                // Any files present at the split point, unmodified in the given branch,
+                // and absent in the current branch should remain absent.
                 continue;
-            }
-            // Any files that have been modified in the current branch
-            // but not in the given branch since the split point should stay as they are.
-            else if (isTrackedAtCurrent && notModifiedAtGiven) {
+            } else if (isTrackedAtCurrent && notModifiedAtGiven) {
+                // Any files that have been modified in the current branch
+                // but not in the given branch since the split point should stay as they are.
                 continue;
-            }
-            // Any files modified in different ways in the current and given branches are in conflict.
-            // “Modified in different ways” can mean that the contents of both are changed and different from other,
-            // or the contents of one are changed and the other file is deleted,
-            // or the file was absent at the split point and has different contents in the given and current branches.
-            else if (!noConflicts) {
+            } else if (!noConflicts) {
+                // Any files modified in different ways in the current and given branches are in conflict.
+                // “Modified in different ways” can mean that the contents of both are changed and different from other,
+                // or the contents of one are changed and the other file is deleted,
+                // or the file was absent at the split point and has different contents in the given and current branches.
                 String mergedContent = createMergedContentInConflict(currentCommit, givenCommit, fileName);
 
                 String blobID = sha1(mergedContent);
@@ -761,7 +751,7 @@ public class Repository {
     }
 
     private static String createMergedContentInConflict(Commit currentCommit, Commit givenCommit, String fileName){
-        if(Objects.equals(currentCommit.getBlobID(fileName), givenCommit.getBlobID(fileName))){
+        if (Objects.equals(currentCommit.getBlobID(fileName), givenCommit.getBlobID(fileName))) {
             return null;
         }
 
