@@ -754,19 +754,19 @@ public class Repository {
             return null;
         }
 
-        String currentContent = "\r";
+        String currentContent = "";
         if (currentCommit.getBlobID(fileName) != null) {
             currentContent = readContentsAsString(join(BLOB_DIR, currentCommit.getBlobID(fileName)));
 //            currentContent += "\n";
         }
 
-        String givenContent = "\r";
+        String givenContent = "";
         if (givenCommit.getBlobID(fileName) != null) {
             givenContent = readContentsAsString(join(BLOB_DIR, givenCommit.getBlobID(fileName)));
 //            givenContent += "\n";
         }
 
-        return String.format("<<<<<<< HEAD\n%s=======\n%s>>>>>>>", currentContent, givenContent);
+        return String.format("<<<<<<< HEAD\r%s=======\r%s>>>>>>>", currentContent, givenContent);
     }
 
     private static String getSplitCommit(String branchName1, String branchName2) {
