@@ -124,8 +124,8 @@ public class Commit implements Serializable {
         return trackedFiles.containsKey(fileName);
     }
 
-    public boolean hasMessage(String message) {
-        return this.message.equals(message);
+    public boolean hasMessage(String msg) {
+        return message.equals(msg);
     }
 
     public Set<String> trackedFileSet() {

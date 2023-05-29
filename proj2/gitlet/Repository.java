@@ -158,7 +158,7 @@ public class Repository {
         writeObject(BRANCH_FILE, branches);
     }
 
-    private static void writeHead(String branchName){
+    private static void writeHead(String branchName) {
         writeObject(HEAD_FILE, branchName);
     }
 
@@ -757,19 +757,19 @@ public class Repository {
         String currentContent = "";
         if (currentCommit.getBlobID(fileName) != null) {
             currentContent = readContentsAsString(join(BLOB_DIR, currentCommit.getBlobID(fileName)));
-            currentContent += "\n";
+//            currentContent += "\n";
         }
 
         String givenContent = "";
         if (givenCommit.getBlobID(fileName) != null) {
             givenContent = readContentsAsString(join(BLOB_DIR, givenCommit.getBlobID(fileName)));
-            givenContent += "\n";
+//            givenContent += "\n";
         }
 
         return String.format("<<<<<<< HEAD\n%s=======\n%s>>>>>>>", currentContent, givenContent);
     }
 
-    private static String getSplitCommit(String branchName1, String branchName2){
+    private static String getSplitCommit(String branchName1, String branchName2) {
         Set<String> visited = new HashSet<>();
         Queue<String> queue = new LinkedList<>();
 
@@ -815,7 +815,7 @@ public class Repository {
         }
     }
 
-    private static void validateNoUncommitedChanges(){
+    private static void validateNoUncommitedChanges() {
         Stage stage = readObject(STAGE_FILE, Stage.class);
         if (!stage.noAddedFiles() || !stage.noRemovedFiles()) {
             Utils.message("You have uncommitted changes.");
@@ -824,19 +824,19 @@ public class Repository {
     }
 
 
-    private static void validateFileRemoval(String fileName, Stage stage, Commit commit){
+    private static void validateFileRemoval(String fileName, Stage stage, Commit commit) {
         if (!stage.isAddedFile(fileName) && !commit.isTrackedFile(fileName)) {
             Utils.message("No reason to remove the file.");
             System.exit(0);
         }
     }
 
-    private static Commit readCommit(String commitID){
+    private static Commit readCommit(String commitID) {
         File commitFile = validateCommitIDExists(commitID);
         return readObject(commitFile, Commit.class);
     }
 
-    private static File validateCommitIDExists(String srcCommitID){
+    private static File validateCommitIDExists(String srcCommitID) {
         if (srcCommitID == null || srcCommitID.length() < 2) {
             Utils.message("No commit with that id exists.");
             System.exit(0);
@@ -853,7 +853,7 @@ public class Repository {
         }
 
         for (String commitID: commitIDs) {
-            if(srcCommitID.equals(commitID.substring(0, srcCommitID.length()))){
+            if (srcCommitID.equals(commitID.substring(0, srcCommitID.length()))) {
                 return join(commitSubDir, commitID);
             }
         }
@@ -875,21 +875,21 @@ public class Repository {
         writeObject(commitFile, commit);
     }
 
-    private static void validateIfFileExistsInCommit(Commit commit, String fileName){
+    private static void validateIfFileExistsInCommit(Commit commit, String fileName) {
         if (!commit.isTrackedFile(fileName)) {
             Utils.message("File does not exist in that commit.");
             System.exit(0);
         }
     }
 
-    private static void validateIfFileExists(File file, String message){
+    private static void validateIfFileExists(File file, String message) {
         if (file == null || !file.exists()) {
             Utils.message(message);
             System.exit(0);
         }
     }
 
-    public static void validateInitialization(){
+    public static void validateInitialization() {
         if (!GITLET_DIR.exists()) {
             Utils.message("Not in an initialized Gitlet directory.");
             System.exit(0);
