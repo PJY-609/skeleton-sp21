@@ -17,19 +17,21 @@
 - [Red Black Tree](./reading/RedBlackTree.md)
 - [Hashing](./reading/Hashing.md)
 - [Heap / Priority Heap](./reading/Heap.md)
+- [Shortest Path: Dijktra & A*](./reading/ShortestPath.md)
 
 ## Lab
 - [Lab2: Debugging (due 01/29)](./lab2/Lab2.pdf)
 - [Lab3: Randomizing Testing and Timing](./lab3/Lab3.pdf)
 - [Lab4: Git and Debugging](./lab4/Lab4.pdf)
 - [Lab6: Canine Capers (file operations and serialization)](./lab6/lab6.pdf)
-- [lab6 sp19: Union Find](./lab6_sp19/)
-- [lab7: BSTMap](./lab7/lab7.pdf)
+- [Lab6 sp19: Union Find](./lab6_sp19/)
+- [Lab7: BSTMap](./lab7/lab7.pdf)
 
 ## Project
 - [Proj0: 2048](./proj0/Project0.pdf)
 - [Proj1: Data Structures](./proj1/Project1.pdf)
 - [Proj1EC: Testing](./proj1/Project1.pdf)
+- [Proj2: Gitlet](./proj2/Project2_Gitlet.pdf) | [Doc](./proj2/gitlet-design.md) | [Autograder results](./proj2/autograde_results.PNG) (Some tests are flawed in nature.)
 
 
 ## Discussion
@@ -41,4 +43,5 @@
 - [Disc5: Polymorphism, Iterators, and Iterables](./disc/disc5/disc5/disc05sol.pdf)
 - [Disc5: Polymorphism, Iterators, and Iterables Exam Prep](./disc/disc5/disc5_exam_prep/examprep05sol.pdf)
 - [Disc6: Disjoint Sets and Asymptotics](./disc/disc6/disc06sol.pdf)
-- [Disc8: ]
+- [Disc8: B-Trees, Red Black Trees, and Hashing](./disc/disc8/disc8.md)
+- [Disc9: Heaps and Graphs](./disc/disc9/disc9.md)

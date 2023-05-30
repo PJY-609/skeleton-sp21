@@ -3,6 +3,12 @@ package gitlet;
 import java.io.Serializable;
 import java.util.*;
 
+/**
+ * Represents a gitlet stage object.
+ * The Stage class provides methods to add, remove, and retrieve file information within the context of a version control system.
+ * It allows tracking changes made to files before committing them to the repository.
+ * */
+
 public class Stage implements Serializable {
     private final TreeMap<String, String> addedFiles = new TreeMap<>();
     private final TreeSet<String> removedFiles = new TreeSet<>();
@@ -28,7 +34,7 @@ public class Stage implements Serializable {
         return addedFiles.containsKey(fileName);
     }
 
-    public boolean isRemovedFiles(String fileName){
+    public boolean isRemovedFiles(String fileName) {
         return removedFiles.contains(fileName);
     }
 

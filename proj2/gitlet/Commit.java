@@ -6,19 +6,12 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 /** Represents a gitlet commit object.
-
- *
+ *  Represents a commit in a version control system and provides methods and fields to store and manipulate commit-related information.
+ *  Provides a representation of a commit in a version control system, allowing manipulation and retrieval of commit-related information, such as message, timestamp, parent commit IDs, and tracked files.
  *  @author Juezhao Yu
  */
 public class Commit implements Serializable {
-    /**
-     *
-     * List all instance variables of the Commit class here with a useful
-     * comment above them describing what that variable represents and how that
-     * variable is used. We've provided one example for `message`.
-     */
 
-    /** The message of this Commit. */
     private final String message;
 
     private final String ID;

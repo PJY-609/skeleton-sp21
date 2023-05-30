@@ -6,6 +6,7 @@
 !**/pom.xml
 !**.md
 !**.pdf
+!**.PNG
 !.fatweleminus
 !.gitignore
 !library-sp21

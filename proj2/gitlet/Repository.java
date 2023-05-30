@@ -11,12 +11,6 @@ import static gitlet.Utils.*;
  *  @author Juezhao YU
  */
 public class Repository {
-    /**
-     *
-     * List all instance variables of the Repository class here with a useful
-     * comment above them describing what that variable represents and how that
-     * variable is used. We've provided two examples for you.
-     */
 
     /** The current working directory. */
     private static final File CWD = new File(System.getProperty("user.dir"));
@@ -632,7 +626,7 @@ public class Repository {
             writeContents(file, blobContent);
         }
 
-        for (String fileName: stage.removedFiles()){
+        for (String fileName: stage.removedFiles()) {
             File file = join(CWD, fileName);
             restrictedDelete(file);
         }
@@ -735,7 +729,7 @@ public class Repository {
         return hasAnyMergeConflict;
     }
 
-    private static String createMergedContentInConflict(Commit currentCommit, Commit givenCommit, String fileName){
+    private static String createMergedContentInConflict(Commit currentCommit, Commit givenCommit, String fileName) {
         if (Objects.equals(currentCommit.getBlobID(fileName), givenCommit.getBlobID(fileName))) {
             return null;
         }

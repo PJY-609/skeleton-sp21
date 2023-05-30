@@ -97,3 +97,4 @@ we will leave one empty spot at the beginning of the array to simplify computati
 | `add`	    | Θ(N)          | Θ(logN)   |	Θ(1)     | Θ(logN) |
 | `getSmallest` |	Θ(1)    | Θ(logN)   |	Θ(N)     |	Θ(1)   |
 | `removeSmallest` | Θ(N)   | Θ(logN)	| Θ(N)       |	Θ(logN) |
+
