@@ -986,15 +986,11 @@ public class Repository {
             }
         }
 
-        writeRemoteBranch(remoteName, remoteBranchName, headCommit.getID());
-        File remoteHeadFile = join(remoteDir, "HEAD");
-        writeObject(remoteHeadFile, remoteBranchName);
-
-        resetRemote(remoteName, headCommit.getID());
+        resetRemote(remoteName, remoteBranchName, headCommit.getID());
 
     }
 
-    private static void resetRemote(String remoteName, String commitID) {
+    private static void resetRemote(String remoteName, String remoteBranchName, String commitID) {
         File remoteDir = getRemoteDir(remoteName);
         String remoteHeadBranchName = readObject(join(remoteDir, "HEAD"), String.class);
         Commit remoteHeadCommit = getRemoteBranchCommit(remoteName, remoteHeadBranchName);
@@ -1004,11 +1000,11 @@ public class Repository {
             restrictedDelete(file);
         }
 
-        File remoteCommitFile = join(remoteDir, "commits", commitID);
-        remoteHeadCommit = readObject(remoteCommitFile, Commit.class);
-        String branchName = readObject(HEAD_FILE, String.class);
-        writeBranch(branchName, remoteHeadCommit);
+        File remoteHeadFile = join(remoteDir, "HEAD");
+        writeObject(remoteHeadFile, remoteBranchName);
+        writeRemoteBranch(remoteName, remoteHeadBranchName, commitID);
 
+        remoteHeadCommit = readRemoteCommit(remoteName, commitID);
         for (String fileName: remoteHeadCommit.trackedFileSet()) {
             String blobContent = getBlobContent(remoteHeadCommit, fileName);
             File file = join(remoteWorkingDir, fileName);
@@ -1016,9 +1012,9 @@ public class Repository {
         }
 
         File remoteStageFile = join(remoteDir, "stage");
-        Stage stage = readObject(remoteStageFile, Stage.class);
-        stage.clear();
-        writeObject(remoteStageFile, stage);
+        Stage remoteStage = readObject(remoteStageFile, Stage.class);
+        remoteStage.clear();
+        writeObject(remoteStageFile, remoteStage);
     }
 
     private static void writeRemoteCommit(String remoteName, Commit commit) {
@@ -1055,7 +1051,6 @@ public class Repository {
             if (commitID.equals(dstCommitID)) {
                 paths.add(new LinkedList<>(path));
             }
-            path.remove(commitID);
 
             Commit commit = readCommit(commitID);
 
@@ -1063,10 +1058,11 @@ public class Repository {
                 String parentID = it.next();
 
                 if (!visited.contains(parentID)) {
+                    List<String> copiedPath = new LinkedList<>(path);
                     commitStack.add(parentID);
                     visited.add(parentID);
-                    path.add(parentID);
-                    pathStack.add(new LinkedList<>(path));
+                    copiedPath.add(parentID);
+                    pathStack.add(copiedPath);
                 }
             }
         }
@@ -1108,7 +1104,8 @@ public class Repository {
      * Brings down commits from the remote Gitlet repository into the local Gitlet repository.
      * Basically, this copies all commits and blobs from the given branch in the remote repository
      * (that are not already in the current repository) into a branch named [remote name]/[remote branch name] in the local .gitlet (just as in real Git),
-     * changing [remote name]/[remote branch name] to point to the head commit (thus copying the contents of the branch from the remote repository to the current one).
+     * changing [remote name]/[remote branch name] to point to the head commit
+     * (thus copying the contents of the branch from the remote repository to the current one).
      * This branch is created in the local repository if it did not previously exist.
      * */
     public static void fetchFromRemote(String remoteName, String remoteBranchName) {
