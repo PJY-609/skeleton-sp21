@@ -150,12 +150,12 @@ Here's the breakdown of the content tree of the `.gitlet` folder after initializ
 └── stage
 ```
 
-- `blobs/`: This directory is used to store the blob objects, which represent the content of files in the version-control system.
-- `branches`: This file stores the branch information. It keeps track of the current branch and its associated commit ID.
-- `commits/`: This directory is used to store the commit objects. Each commit represents a snapshot of the project's state at a particular point in time.
-- `HEAD`: This file stores the reference to the current branch. It indicates which branch the repository is currently on.
-- `remotes`: This file stores remote repository information, such as remote URLs or other relevant details.
-- `stage`: This file stores the information about the staging area, where changes are temporarily stored before being committed.
+- `blobs/`: This directory is used to store the blob objects, which represent the content of files in the version-control system. The blob objects are named by the SHA1 of their contents as `String`.
+- `branches`: `TreeMap<String, String>`. This file stores the branch information. It maps branch names to their respective head commit IDs. The commit objects are named by the SHA1 of their `Commit` instances.
+- `commits/`: `Commit`. It has subdirectories grouped by the first two characters of commit ID. This directory is used to store the commit objects. Each commit represents a snapshot of the project's state at a particular point in time.
+- `HEAD`: `String`. This file stores the reference to the current branch. It indicates which branch the repository is currently on.
+- `remotes`: `TreeMap<String, String>`. This file stores remote repository information, by mapping remote names to their respective remote repo directories.
+- `stage`: `Stage`. This file stores the information about the staging area, where changes are temporarily stored before being committed.
 
 
 
