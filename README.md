@@ -19,6 +19,8 @@
 - [Heap / Priority Heap](./reading/Heap.md)
 - [Shortest Path: Dijktra & A*](./reading/ShortestPath.md)
 - [Minimum Spanning Tree](./reading/MST.md)
+- [KD-Tree](./reading/KD-Tree.md)
+- [Trie](./reading/Trie.md)
 - [Software Engineering](./reading/SoftwareEngineerning.md)
 
 ## Lab
