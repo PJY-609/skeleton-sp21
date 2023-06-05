@@ -255,24 +255,28 @@ public class Repository {
      * */
     public static void reset(String commitID) {
         File commitFile = validateCommitIDExists(commitID);
-        Commit resetHeadCommit = readObject(commitFile, Commit.class);
+        Commit givenCommit = readObject(commitFile, Commit.class);
         Commit headCommit = getHeadCommit();
-        validateNoUntrackedFilesInTheWay(headCommit, resetHeadCommit);
+        validateNoUntrackedFilesInTheWay(headCommit, givenCommit);
 
+        // delete tracked files in the current commit
         for (String fileName: headCommit.trackedFileSet()) {
             File file = join(CWD, fileName);
             restrictedDelete(file);
         }
 
+        // write the given commit to the head pointer
         String branchName = readObject(HEAD_FILE, String.class);
-        writeBranch(branchName, resetHeadCommit);
+        writeBranch(branchName, givenCommit);
 
-        for (String fileName: resetHeadCommit.trackedFileSet()) {
-            String blobContent = getBlobContent(resetHeadCommit, fileName);
+        // write tracked contents in the given commit to the CWD
+        for (String fileName: givenCommit.trackedFileSet()) {
+            String blobContent = getBlobContent(givenCommit, fileName);
             File file = join(CWD, fileName);
             writeContents(file, blobContent);
         }
 
+        // clear stage
         Stage stage = readObject(STAGE_FILE, Stage.class);
         stage.clear();
         writeObject(STAGE_FILE, stage);
@@ -619,6 +623,7 @@ public class Repository {
 
         validateNoUntrackedFilesInTheWay2(currentCommit, stage);
 
+        // update contents based on the added files in the stage
         for (String fileName: stage.addedFileSet()) {
             File file = join(CWD, fileName);
             String blobID = stage.getBlobID(fileName);
@@ -626,6 +631,7 @@ public class Repository {
             writeContents(file, blobContent);
         }
 
+        // remove files based on the removed file list in the stage
         for (String fileName: stage.removedFiles()) {
             File file = join(CWD, fileName);
             restrictedDelete(file);
@@ -737,13 +743,11 @@ public class Repository {
         String currentContent = "";
         if (currentCommit.getBlobID(fileName) != null) {
             currentContent = readContentsAsString(join(BLOB_DIR, currentCommit.getBlobID(fileName)));
-//            currentContent += System.getProperty("line.separator");
         }
 
         String givenContent = "";
         if (givenCommit.getBlobID(fileName) != null) {
             givenContent = readContentsAsString(join(BLOB_DIR, givenCommit.getBlobID(fileName)));
-//            givenContent += System.getProperty("line.separator");
         }
 
         return "<<<<<<< HEAD"
@@ -954,6 +958,7 @@ public class Repository {
             return;
         }
 
+        // Check if there is any path from the current head commit to the remote head commit
         Commit remoteBranchHeadCommit = getRemoteBranchCommit(remoteName, remoteBranchName);
         Commit headCommit = getHeadCommit();
         List<List<String>> paths = findPathsToCommit(headCommit.getID(), remoteBranchHeadCommit.getID());
@@ -968,6 +973,7 @@ public class Repository {
             commitIDs.addAll(path);
         }
 
+        // copy local commits and all relevant blob objects to remote repo
         for (String commitID: commitIDs) {
             Commit commit = readCommit(commitID);
             writeRemoteCommit(remoteName, commit);
@@ -989,22 +995,29 @@ public class Repository {
         String remoteHeadBranchName = readObject(join(remoteDir, "HEAD"), String.class);
         Commit remoteHeadCommit = getRemoteBranchCommit(remoteName, remoteHeadBranchName);
         File remoteWorkingDir = remoteDir.getParentFile();
+
+        // clear tracked files in the remote head commit
         for (String fileName: remoteHeadCommit.trackedFileSet()) {
             File file = join(remoteWorkingDir, fileName);
             restrictedDelete(file);
         }
 
+        // update remote head
         File remoteHeadFile = join(remoteDir, "HEAD");
         writeObject(remoteHeadFile, remoteBranchName);
         writeRemoteBranch(remoteName, remoteHeadBranchName, commitID);
 
-        remoteHeadCommit = readRemoteCommit(remoteName, commitID);
-        for (String fileName: remoteHeadCommit.trackedFileSet()) {
-            String blobContent = getBlobContent(remoteHeadCommit, fileName);
-            File file = join(remoteWorkingDir, fileName);
-            writeContents(file, blobContent);
+        // update based on given commit
+        Commit remoteGivenCommit = readRemoteCommit(remoteName, commitID);
+        if (remoteGivenCommit != null) {
+            for (String fileName: remoteGivenCommit.trackedFileSet()) {
+                String blobContent = getBlobContent(remoteGivenCommit, fileName);
+                File file = join(remoteWorkingDir, fileName);
+                writeContents(file, blobContent);
+            }
         }
 
+        // clear remote stage
         File remoteStageFile = join(remoteDir, "stage");
         Stage remoteStage = readObject(remoteStageFile, Stage.class);
         remoteStage.clear();
@@ -1108,12 +1121,15 @@ public class Repository {
 
         Set<String> commitIDs = traverseRemoteBranch(remoteName, remoteBranchName);
 
+
+        // copy relevant remote commits and remote blob objects to local repo
         for (String commitID: commitIDs) {
             Commit commit = readRemoteCommit(remoteName, commitID);
             if (commit == null) {
                 continue;
             }
             writeCommit(commit);
+
             for (String fileName: commit.trackedFileSet()) {
                 String blobID = commit.getBlobID(fileName);
                 File remoteBlobFile = join(remoteDir, "blobs", blobID);
@@ -1123,6 +1139,7 @@ public class Repository {
             }
         }
 
+        // update branch
         String branchName = String.format("%s/%s", remoteName, remoteBranchName);
         Commit commit = getRemoteBranchCommit(remoteName, remoteBranchName);
         writeBranch(branchName, commit);
