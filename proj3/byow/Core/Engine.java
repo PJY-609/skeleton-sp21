@@ -3,7 +3,6 @@ package byow.Core;
 import byow.TileEngine.TERenderer;
 import byow.TileEngine.TETile;
 import byow.TileEngine.Tileset;
-import jh61b.junit.In;
 
 import java.util.Arrays;
 import java.util.Random;
@@ -60,7 +59,7 @@ public class Engine {
     public TETile[][] interactWithInputString(String input) {
         TETile[][] finalWorldFrame = createEmptyWorld();
 
-        int randomSeed = parseRandomSeedFromInputString(input);
+        long randomSeed = parseRandomSeedFromInputString(input);
         Random random = new Random(randomSeed);
 
         BSPTree bspTree = new BSPTree(WIDTH, HEIGHT, BSP_TREE_DEPTH, random);
@@ -69,19 +68,19 @@ public class Engine {
         return finalWorldFrame;
     }
 
-    private static Integer parseRandomSeedFromInputString(String input){
+    private static long parseRandomSeedFromInputString(String input){
         Pattern pattern = Pattern.compile("[Nn][0-9]+[Ss]");
         Matcher matcher = pattern.matcher(input);
         if (matcher.find()) {
             String matched = matcher.group(0);
-            return Integer.valueOf(matched.substring(1, matched.length() - 1));
+            return Long.parseLong(matched.substring(1, matched.length() - 1));
         }
 
         return 123;
     }
 
     public static void main(String[] args){
-        System.out.println(parseRandomSeedFromInputString("N1234S"));
+        System.out.println(parseRandomSeedFromInputString("N5197880843569031643S"));
 //        Random random = new Random();
 //        BSPTree bspTree = new BSPTree(WIDTH, HEIGHT, BSP_TREE_DEPTH, random);
 //
