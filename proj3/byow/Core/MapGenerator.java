@@ -34,13 +34,13 @@ public class MapGenerator {
             room = null;
         }
 
-        public BSPTreeNode(BSPTreeNode left, BSPTreeNode right){
+        public BSPTreeNode(BSPTreeNode left, BSPTreeNode right) {
             isLeaf = false;
             this.left = left;
             this.right = right;
         }
 
-        public BSPTreeNode(int xmin, int xmax, int ymin, int ymax, Random random){
+        public BSPTreeNode(int xmin, int xmax, int ymin, int ymax, Random random) {
             isLeaf = true;
 
             if (RandomUtils.uniform(random,2) == 1) {
@@ -72,9 +72,9 @@ public class MapGenerator {
 
     private BSPTreeNode buildTreeRecursiveHelper(int depth, int xmin, int xmax, int ymin, int ymax) {
         // space is too small, return empty leaf node
-        int width = xmax - xmin + 1;
-        int height = ymax - ymin + 1;
-        if (width <= Engine.MIN_BSP_WIDTH || height <= Engine.MIN_BSP_HEIGHT){
+        int w = xmax - xmin + 1;
+        int h = ymax - ymin + 1;
+        if (w <= Engine.MIN_BSP_WIDTH || h <= Engine.MIN_BSP_HEIGHT){
             return new BSPTreeNode();
         }
 
@@ -105,8 +105,8 @@ public class MapGenerator {
 
 
     private int[] randomBinaryPartition(int xmin, int xmax, int ymin, int ymax){
-        int height = ymax - ymin + 1;
-        int width = xmax - xmin + 1;
+        int h = ymax - ymin + 1;
+        int w = xmax - xmin + 1;
 
         int[] ret = new int[2];
 
@@ -122,14 +122,14 @@ public class MapGenerator {
             ret[0] = -1;
             ret[1] = (int) ((ymax + ymin) * midRatio); // space between [ymin + 1, ymax - 1]
             minRatio = Engine.MIN_BSP_HW_RATIO;
-            ratio1 = (double) (ret[1] - ymin) / width;
-            ratio2 = (double) (ymax - ret[1] + 1) / width;
+            ratio1 = (double) (ret[1] - ymin) / w;
+            ratio2 = (double) (ymax - ret[1] + 1) / w;
         } else {
             ret[1] = -1;
             ret[0] = (int) ((xmax + xmin) * midRatio); // space between [xmin + 1, xmax - 1]
             minRatio = Engine.MIN_BSP_WH_RATIO;
-            ratio1 = (double) (ret[0] - xmin + 1) / height;
-            ratio2 = (double) (xmax - ret[0] + 1) / height;
+            ratio1 = (double) (ret[0] - xmin + 1) / h;
+            ratio2 = (double) (xmax - ret[0] + 1) / h;
         }
 
         // Keep partitioning until conditions satisfied
@@ -141,14 +141,14 @@ public class MapGenerator {
                 ret[0] = -1;
                 ret[1] = (int) ((ymax + ymin) * midRatio); // space between [ymin + 1, ymax - 1]
                 minRatio = Engine.MIN_BSP_HW_RATIO;
-                ratio1 = (double) (ret[1] - ymin) / width;
-                ratio2 = (double) (ymax - ret[1] + 1) / width;
+                ratio1 = (double) (ret[1] - ymin) / w;
+                ratio2 = (double) (ymax - ret[1] + 1) / w;
             } else {
                 ret[1] = -1;
                 ret[0] = (int) ((xmax + xmin) * midRatio); // space between [xmin + 1, xmax - 1]
                 minRatio = Engine.MIN_BSP_WH_RATIO;
-                ratio1 = (double) (ret[0] - xmin + 1) / height;
-                ratio2 = (double) (xmax - ret[0] + 1) / height;
+                ratio1 = (double) (ret[0] - xmin + 1) / h;
+                ratio2 = (double) (xmax - ret[0] + 1) / h;
             }
         }
 

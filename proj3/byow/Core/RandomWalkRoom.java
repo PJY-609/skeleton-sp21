@@ -46,7 +46,7 @@ public class RandomWalkRoom extends Room {
                 floorPoints.add(randomPoint);
                 currentPoint = randomPoint;
 
-                for (int t = 0; t < 8; t ++) {
+                for (int t = 0; t < 8; t++) {
                     Point wallPoint = new Point(randomPoint);
                     wallPoint.translate(dX[t], dY[t]);
                     wallPoints.add(wallPoint);

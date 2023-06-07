@@ -300,7 +300,10 @@ public class Engine {
 
 
         int[] randomSeedLoc = locateRandomSeed(input);
-        long randomSeed = Long.parseLong(input.substring(randomSeedLoc[0] + 1, randomSeedLoc[1] - 1));
+        long randomSeed = 2023;
+        if (randomSeedLoc[0] + 2 < randomSeedLoc[1]) {
+            randomSeed = Long.parseLong(input.substring(randomSeedLoc[0] + 1, randomSeedLoc[1] - 1));
+        }
         random = new Random(randomSeed);
 
         instructionBuilder.append(input, randomSeedLoc[0], randomSeedLoc[1]);
