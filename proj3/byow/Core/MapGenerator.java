@@ -6,14 +6,14 @@ import byow.TileEngine.Tileset;
 import java.awt.Point;
 import java.util.*;
 
-public class BSPTree {
+public class MapGenerator {
     private final Random random;
 
     private final int width;
 
     private final int height;
 
-    private final BSPNode root;
+    private final BSPTreeNode bspTreeRoot;
 
     private final List<Point> roomCenters;
 
@@ -21,30 +21,26 @@ public class BSPTree {
 
     private final HashSet<Point> corridorWallPoints;
 
-    public static class BSPNode {
-        private BSPNode left;
-        private BSPNode right;
+    public static class BSPTreeNode {
+        private BSPTreeNode left;
+        private BSPTreeNode right;
 
         private final boolean isLeaf;
 
-        private Point bottomLeftCorner;
-
-        private Point upperRightCorner;
-
         public Room room;
 
-        public BSPNode() {
+        public BSPTreeNode() {
             isLeaf = true;
             room = null;
         }
 
-        public BSPNode(BSPNode left, BSPNode right){
+        public BSPTreeNode(BSPTreeNode left, BSPTreeNode right){
             isLeaf = false;
             this.left = left;
             this.right = right;
         }
 
-        public BSPNode(int xmin, int xmax, int ymin, int ymax, Random random){
+        public BSPTreeNode(int xmin, int xmax, int ymin, int ymax, Random random){
             isLeaf = true;
 
             if (RandomUtils.uniform(random,2) == 1) {
@@ -52,31 +48,11 @@ public class BSPTree {
             } else {
                 room = new RandomWalkRoom(xmin + 1, xmax - 1, ymin + 1, ymax - 1, random);
             }
-
-
-            bottomLeftCorner = new Point(xmin, ymin);
-            upperRightCorner = new Point(xmax, ymax);
-        }
-
-        public void draw(TETile[][] canvas) {
-            if (bottomLeftCorner == null || upperRightCorner == null) {
-                return;
-            }
-
-            for (int i = bottomLeftCorner.x; i <= upperRightCorner.x; i++) {
-                canvas[i][bottomLeftCorner.y] = Tileset.WALL;
-                canvas[i][upperRightCorner.y] = Tileset.WALL;
-            }
-
-            for (int i = bottomLeftCorner.y; i <= upperRightCorner.y; i++) {
-                canvas[bottomLeftCorner.x][i] = Tileset.WALL;
-                canvas[upperRightCorner.x][i] = Tileset.WALL;
-            }
         }
     }
 
 
-    public BSPTree(int width, int height, int depth, Random random) {
+    public MapGenerator(int width, int height, int depth, Random random) {
         assert depth > 0;
 
         this.width = width;
@@ -89,32 +65,32 @@ public class BSPTree {
         corridorFloorPoints = new HashSet<>();
         corridorWallPoints = new HashSet<>();
 
-        root = buildTreeRecursiveHelper(depth, 0, width - 1, 0, height - 1);
+        bspTreeRoot = buildTreeRecursiveHelper(depth, 0, width - 1, 0, height - 1);
 
         connectRoomsWithCorridors();
     }
 
-    private BSPNode buildTreeRecursiveHelper(int depth, int xmin, int xmax, int ymin, int ymax) {
+    private BSPTreeNode buildTreeRecursiveHelper(int depth, int xmin, int xmax, int ymin, int ymax) {
         // space is too small, return empty leaf node
         int width = xmax - xmin + 1;
         int height = ymax - ymin + 1;
         if (width <= Engine.MIN_BSP_WIDTH || height <= Engine.MIN_BSP_HEIGHT){
-            return new BSPNode();
+            return new BSPTreeNode();
         }
 
         // return leaf node
         if (depth == 1) {
-            BSPNode bspNode = new BSPNode(xmin, xmax, ymin, ymax, random);
-            roomCenters.add(bspNode.room.center);
-            return bspNode;
+            BSPTreeNode bspTreeNode = new BSPTreeNode(xmin, xmax, ymin, ymax, random);
+            roomCenters.add(bspTreeNode.room.center);
+            return bspTreeNode;
         }
 
         depth--;
 
         int[] splitResult = randomBinaryPartition(xmin, xmax, ymin, ymax);
 
-        BSPNode left;
-        BSPNode right;
+        BSPTreeNode left;
+        BSPTreeNode right;
         if (splitResult[0] > -1) {
             left = buildTreeRecursiveHelper(depth, xmin, splitResult[0] - 1, ymin, ymax);
             right = buildTreeRecursiveHelper(depth, splitResult[0], xmax, ymin, ymax);
@@ -123,7 +99,7 @@ public class BSPTree {
             right = buildTreeRecursiveHelper(depth, xmin, xmax, splitResult[1], ymax);
         }
 
-        return new BSPNode(left, right);
+        return new BSPTreeNode(left, right);
     }
 
 
@@ -218,85 +194,61 @@ public class BSPTree {
         connectTwoRooms(startCenter, selectCenter);
     }
 
+
     private void connectTwoRooms(Point srcPoint, Point dstPoint) {
         Point currentPoint = new Point(srcPoint);
 
-        int[] dX = {-1, -1, -1, 0, 0, 1, 1, 1};
-        int[] dY = {-1, 0, 1, -1, 1, -1, 0, 1};
-
-        while (currentPoint.x != dstPoint.x) {
-            int dx = dstPoint.x - currentPoint.x > 0 ? 1 : -1;
-            int dy = 0;
-
-            if (RandomUtils.uniform(random) < 0.2) {
-                dx = 0;
-                dy = RandomUtils.uniform(random, -1, 2);
-            }
-
-            currentPoint.translate(dx, dy);
-
-            if (0 < currentPoint.x && currentPoint.x < width - 1 && 0 < currentPoint.y && currentPoint.y < height - 1) {
-                corridorFloorPoints.add(currentPoint);
-                currentPoint = new Point(currentPoint);
-
-                for (int i = 0; i < 8; i++) {
-                    Point wallPoint = new Point(currentPoint);
-                    wallPoint.translate(dX[i], dY[i]);
-                    corridorWallPoints.add(wallPoint);
-                }
-            }
-        }
-
-        while (currentPoint.y != dstPoint.y) {
+        while (currentPoint.x != dstPoint.x || currentPoint.y != dstPoint.y) {
             int dx = 0;
-            int dy = dstPoint.y - currentPoint.y > 0 ? 1 : -1;
-
-            if (RandomUtils.uniform(random) < 0.2) {
-                dx = RandomUtils.uniform(random, -1, 2);
-                dy = 0;
-            }
-
-            currentPoint.translate(dx, dy);
-
-            if (0 < currentPoint.x && currentPoint.x < width - 1 && 0 < currentPoint.y && currentPoint.y < height - 1) {
-                corridorFloorPoints.add(currentPoint);
-                currentPoint = new Point(currentPoint);
-
-                for (int i = 0; i < 8; i++) {
-                    Point wallPoint = new Point(currentPoint);
-                    wallPoint.translate(dX[i], dY[i]);
-                    corridorWallPoints.add(wallPoint);
-                }
-            }
-        }
-
-        while (currentPoint.x != dstPoint.x) {
-            int dx = dstPoint.x - currentPoint.x > 0 ? 1 : -1;
             int dy = 0;
 
+            if (currentPoint.x != dstPoint.x) {
+                dx = (dstPoint.x - currentPoint.x) / Math.abs(dstPoint.x - currentPoint.x);
+            } else {
+                dy = (dstPoint.y - currentPoint.y) / Math.abs(dstPoint.y - currentPoint.y);
+            }
+
+            if (RandomUtils.uniform(random) < 0.2) {
+                if (dx != 0) {
+                    dx = 0;
+                    dy = RandomUtils.uniform(random, -1, 2);
+                } else {
+                    dx = RandomUtils.uniform(random, -1, 2);
+                    dy = 0;
+                }
+            }
+
             currentPoint.translate(dx, dy);
 
             if (0 < currentPoint.x && currentPoint.x < width - 1 && 0 < currentPoint.y && currentPoint.y < height - 1) {
-                corridorFloorPoints.add(currentPoint);
+                addCorridorPoint(currentPoint);
                 currentPoint = new Point(currentPoint);
-
-                for (int i = 0; i < 8; i++) {
-                    Point wallPoint = new Point(currentPoint);
-                    wallPoint.translate(dX[i], dY[i]);
-                    corridorWallPoints.add(wallPoint);
-                }
             }
         }
     }
 
+    private void addCorridorPoint(Point currentPoint) {
+        int[] dX = {-1, -1, -1, 0, 0, 1, 1, 1};
+        int[] dY = {-1, 0, 1, -1, 1, -1, 0, 1};
+
+        if (0 < currentPoint.x && currentPoint.x < width - 1 && 0 < currentPoint.y && currentPoint.y < height - 1) {
+            corridorFloorPoints.add(currentPoint);
+
+            for (int i = 0; i < 8; i++) {
+                Point wallPoint = new Point(currentPoint);
+                wallPoint.translate(dX[i], dY[i]);
+                corridorWallPoints.add(wallPoint);
+            }
+        }
+    }
 
     private void draw(TETile[][] canvas, TETile tile){
-        Queue<BSPNode> queue = new LinkedList<>();
+        Queue<BSPTreeNode> queue = new LinkedList<>();
 
-        queue.add(root);
+        queue.add(bspTreeRoot);
 
         while (!queue.isEmpty()) {
-            BSPNode node = queue.remove();
+            BSPTreeNode node = queue.remove();
             if (node.isLeaf && node.room != null) {
                 node.room.draw(canvas, tile);
             } else if (!node.isLeaf) {

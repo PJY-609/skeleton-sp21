@@ -13,6 +13,7 @@ import java.awt.Font;
  */
 public class TERenderer {
     private static final int TILE_SIZE = 16;
+    private static final Font DEFAULT_FONT = new Font("Monaco", Font.BOLD, TILE_SIZE - 2);
     private int width;
     private int height;
     private int xOffset;
@@ -33,8 +34,9 @@ public class TERenderer {
         this.xOffset = xOff;
         this.yOffset = yOff;
         StdDraw.setCanvasSize(width * TILE_SIZE, height * TILE_SIZE);
-        Font font = new Font("Monaco", Font.BOLD, TILE_SIZE - 2);
-        StdDraw.setFont(font);      
+
+        StdDraw.setFont(DEFAULT_FONT);
+
         StdDraw.setXscale(0, width);
         StdDraw.setYscale(0, height);
 
@@ -84,6 +86,8 @@ public class TERenderer {
      * @param world the 2D TETile[][] array to render
      */
     public void renderFrame(TETile[][] world) {
+        StdDraw.setFont(DEFAULT_FONT);
+
         int numXTiles = world.length;
         int numYTiles = world[0].length;
         StdDraw.clear(new Color(0, 0, 0));
