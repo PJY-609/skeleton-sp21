@@ -144,7 +144,7 @@ public class Engine {
 
         initWorld();
 
-        replayGame(instruction);
+        replayGame(instruction.substring(randomSeedLoc[1]));
     }
 
 
@@ -291,7 +291,7 @@ public class Engine {
     public TETile[][] interactWithInputString(String input) {
         instructionBuilder = new StringBuilder();
 
-        if (input.startsWith("L")) {
+        if (input.startsWith("L") || input.startsWith("l")) {
             instructionBuilder.append("L");
             loadGame();
             runGame(input.substring(1));
@@ -304,6 +304,7 @@ public class Engine {
         if (randomSeedLoc[0] + 2 < randomSeedLoc[1]) {
             randomSeed = Long.parseLong(input.substring(randomSeedLoc[0] + 1, randomSeedLoc[1] - 1));
         }
+
         random = new Random(randomSeed);
 
         instructionBuilder.append(input, randomSeedLoc[0], randomSeedLoc[1]);
@@ -329,7 +330,15 @@ public class Engine {
 
     public static void main(String[] args){
         Engine engine = new Engine();
-        engine.interactWithInputString("LSWASWDDDSSA:Q");
+//        TETile[][] frame = engine.interactWithInputString("n7193300625454684331saaawasdaawd:q");
+        engine.ter.initialize(WIDTH, HEIGHT);
+//        engine.ter.renderFrame(frame);
+//        StdDraw.show();
+
+        TETile[][] frame = engine.interactWithInputString("lwsd");
+//        StdDraw.clear(Color.BLACK);
+        engine.ter.renderFrame(frame);
+        StdDraw.show();
 
     }
 
