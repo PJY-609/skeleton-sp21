@@ -180,8 +180,8 @@ public class Engine {
         StdDraw.clear(Color.BLACK);
         ter.renderFrame(world);
         StdDraw.show();
-        StdDraw.save(String.format("%d.jpg", count));
-        count++;
+//        StdDraw.save(String.format("%d.jpg", count));
+//        count++;
     }
 
     private void moveAvatar(char c, boolean keepTrack) {

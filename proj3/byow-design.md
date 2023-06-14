@@ -87,6 +87,10 @@ Since the algorithm solely focuses on the distance to the destination, the initi
 
 However, if we set the avatar as the source and the enemy as the destination, we avoid this problem. The last few steps towards the enemy (destination) provide a reliable guess for the shortest path between the enemy and the avatar. We use the term "guess" because the greedy BFS algorithm does not guarantee the optimal solution (shortest path).
 
+## Persistence
+
+Run `Engine.main` to kick start.
+
 ## Refereces
 
 [Amit’s A* Pages](http://theory.stanford.edu/~amitp/GameProgramming/)
