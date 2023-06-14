@@ -21,26 +21,26 @@ public class MapGenerator {
 
     private final HashSet<Point> corridorWallPoints;
 
-    public static class BSPTreeNode {
+    private static class BSPTreeNode {
         private BSPTreeNode left;
         private BSPTreeNode right;
 
         private final boolean isLeaf;
 
-        public Room room;
+        private Room room;
 
-        public BSPTreeNode() {
+        private BSPTreeNode() {
             isLeaf = true;
             room = null;
         }
 
-        public BSPTreeNode(BSPTreeNode left, BSPTreeNode right) {
+        private BSPTreeNode(BSPTreeNode left, BSPTreeNode right) {
             isLeaf = false;
             this.left = left;
             this.right = right;
         }
 
-        public BSPTreeNode(int xmin, int xmax, int ymin, int ymax, Random random) {
+        private BSPTreeNode(int xmin, int xmax, int ymin, int ymax, Random random) {
             isLeaf = true;
 
             if (RandomUtils.uniform(random,2) == 1) {

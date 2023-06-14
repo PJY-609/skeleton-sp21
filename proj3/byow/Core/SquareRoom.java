@@ -46,8 +46,8 @@ public class SquareRoom extends Room{
         floorUpperRightCorner = new Point(Math.max(x1, x2), Math.max(y1, y2));
 
         center = new Point();
-        center.x = (floorBottomLeftCorner.x + floorBottomLeftCorner.x) / 2;
-        center.y = (floorUpperRightCorner.y + floorUpperRightCorner.y) / 2;
+        center.x = (floorBottomLeftCorner.x + floorUpperRightCorner.x) / 2;
+        center.y = (floorBottomLeftCorner.y + floorUpperRightCorner.y) / 2;
     }
 
     @Override

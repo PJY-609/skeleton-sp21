@@ -4,12 +4,13 @@ import byow.TileEngine.TERenderer;
 import byow.TileEngine.TETile;
 import byow.TileEngine.Tileset;
 import edu.princeton.cs.introcs.StdDraw;
-import jdk.jshell.execution.Util;
 
-import java.awt.*;
+import java.awt.Point;
+import java.awt.Font;
+import java.awt.Color;
+import java.util.*;
 import java.io.File;
-import java.util.Arrays;
-import java.util.Random;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -40,12 +41,18 @@ public class Engine {
 
     private static final File GAME_FILE = Utils.join(System.getProperty("user.dir"), "game.txt");
 
+
     private StringBuilder instructionBuilder = new StringBuilder();
     private Random random = new Random();
 
     private TETile[][] world;
 
     private Point avatarPosition = new Point();
+
+    private Point enemyPosition = new Point();
+
+    private int count = 0;
+
 
     /**
      * Method used for exploring a fresh world. This method should handle all inputs,
@@ -57,7 +64,15 @@ public class Engine {
 
         showStartMenuPage();
         handleStartMenuInput();
-        runGame();
+
+        Runnable runnable1 = this::runGame;
+        Runnable runnable2 = this::huntAvatar;
+
+        Thread thread1 = new Thread(runnable1);
+        Thread thread2 = new Thread(runnable2);
+
+        thread1.start();
+        thread2.start();
     }
 
     private void initWorld() {
@@ -66,10 +81,10 @@ public class Engine {
         MapGenerator mapGenerator = new MapGenerator(WIDTH, HEIGHT, BSP_TREE_DEPTH, random);
         mapGenerator.draw(world);
 
-        placeAvatarRandomly();
+        placeCharactersRandomly();
     }
 
-    private void placeAvatarRandomly() {
+    private void placeCharactersRandomly() {
         while (true) {
             int x = RandomUtils.uniform(random, 0, WIDTH);
             int y = RandomUtils.uniform(random, 0, HEIGHT);
@@ -77,6 +92,17 @@ public class Engine {
             if (world[x][y].equals(Tileset.FLOOR)) {
                 world[x][y] = Tileset.AVATAR;
                 avatarPosition.setLocation(x, y);
+                break;
+            }
+        }
+
+        while (true) {
+            int x = RandomUtils.uniform(random, 0, WIDTH);
+            int y = RandomUtils.uniform(random, 0, HEIGHT);
+
+            if (world[x][y].equals(Tileset.FLOOR)) {
+                world[x][y] = Tileset.ENEMY;
+                enemyPosition.setLocation(x, y);
                 break;
             }
         }
@@ -109,6 +135,8 @@ public class Engine {
                     break;
                 }
             }
+
+
         }
     }
 
@@ -152,9 +180,26 @@ public class Engine {
         StdDraw.clear(Color.BLACK);
         ter.renderFrame(world);
         StdDraw.show();
+        StdDraw.save(String.format("%d.jpg", count));
+        count++;
     }
 
     private void moveAvatar(char c, boolean keepTrack) {
+        Point targetPosition = moveCharacter(c);
+        if (targetPosition == null) {
+            return;
+        }
+
+        if (keepTrack) {
+            instructionBuilder.append(c);
+        }
+
+        world[avatarPosition.x][avatarPosition.y] = Tileset.FLOOR;
+        world[targetPosition.x][targetPosition.y] = Tileset.AVATAR;
+        avatarPosition = targetPosition;
+    }
+
+    private Point moveCharacter(char c) {
         Point targetPosition = new Point(avatarPosition);
 
         if (c == 'W') {
@@ -167,16 +212,14 @@ public class Engine {
             targetPosition.translate(1, 0);
         }
 
-        if (0 <= targetPosition.x && targetPosition.x < WIDTH && 0 <= targetPosition.y && targetPosition.y < HEIGHT
-                && world[targetPosition.x][targetPosition.y].equals(Tileset.FLOOR)) {
-            if (keepTrack) {
-                instructionBuilder.append(c);
-            }
-            world[avatarPosition.x][avatarPosition.y] = Tileset.FLOOR;
-            world[targetPosition.x][targetPosition.y] = Tileset.AVATAR;
-            avatarPosition = targetPosition;
+        boolean xInRange = 0 <= targetPosition.x && targetPosition.x < WIDTH;
+        boolean yInRange = 0 <= targetPosition.y && targetPosition.y < HEIGHT;
+
+        if (xInRange && yInRange && world[targetPosition.x][targetPosition.y].equals(Tileset.FLOOR)) {
+            return targetPosition;
         }
 
+        return null;
     }
 
     private void showStartMenuPage() {
@@ -328,18 +371,48 @@ public class Engine {
         return ret;
     }
 
+    public void huntAvatar() {
+        List<Point> path = PathFindingUtils.shortest(enemyPosition, avatarPosition, world);
+        Queue<List<Point>> paths = new LinkedList<>();
+        paths.offer(path);
+
+        while (!avatarPosition.equals(enemyPosition)) {
+            path = paths.poll();
+
+            if (path == null || path.isEmpty()) {
+                continue;
+            }
+
+            for (Point p : path) {
+                world[p.x][p.y] = Tileset.HUNTING_TRAJECTORY;
+            }
+
+            Point point = path.get(0);
+            world[enemyPosition.x][enemyPosition.y] = Tileset.FLOOR;
+            enemyPosition.setLocation(point.x, point.y);
+            world[enemyPosition.x][enemyPosition.y] = Tileset.ENEMY;
+
+            repaintWorld();
+
+            for (Point p : path) {
+                world[p.x][p.y] = Tileset.FLOOR;
+            }
+
+            path = PathFindingUtils.shortest(enemyPosition, avatarPosition, world);
+            paths.offer(path);
+
+            try {
+                TimeUnit.MILLISECONDS.sleep(250);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+
+        }
+    }
+
     public static void main(String[] args){
         Engine engine = new Engine();
-//        TETile[][] frame = engine.interactWithInputString("n7193300625454684331saaawasdaawd:q");
-        engine.ter.initialize(WIDTH, HEIGHT);
-//        engine.ter.renderFrame(frame);
-//        StdDraw.show();
-
-        TETile[][] frame = engine.interactWithInputString("lwsd");
-//        StdDraw.clear(Color.BLACK);
-        engine.ter.renderFrame(frame);
-        StdDraw.show();
-
+        engine.interactWithKeyboard();
     }
 
     private static TETile[][] createEmptyWorld() {
