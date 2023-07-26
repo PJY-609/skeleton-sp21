@@ -106,7 +106,7 @@ _______________________________________________________
 	- Rotate right the appropriate node to fix.
 
 ```
-            add(E)              rotateLeft(E)
+            add(E)              rotateRight(E)
      B      ----->     B        ------------>       B
     / \               / \                          / \
    A   Z             A   Z                        A   S
