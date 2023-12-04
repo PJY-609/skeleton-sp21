@@ -37,7 +37,9 @@
 - [Proj1EC: Testing](./proj1/Project1.pdf)
 - [Proj2: Gitlet](./proj2/Project2_Gitlet.pdf) | [Design Doc](./proj2/gitlet-design.md) | [Autograder results](./proj2/autograde_results.PNG) (Some tests are flawed in nature.)
 - Proj2 (fa20): BearMaps
-  - [Proj2ab: KDTree, MinPQ](../skeleton-fa20/blob/master/proj2ab/bearmaps/Project2AB.pdf)
+  - [Proj2ab: KDTree, MinPQ](https://github.com/PJY-609/skeleton-fa20/blob/master/proj2ab/bearmaps/Project2AB.pdf)
+  - [Proj2c: A* Solver](https://github.com/PJY-609/skeleton-fa20/blob/master/proj2c/bearmaps/Project2C.pdf)
+  - [Proj2d: Map Rasterization, Auto-Complete (Trie)](https://github.com/PJY-609/skeleton-fa20/blob/master/proj2c/bearmaps/Project2D.pdf)
 - [Proj3: BYOW](./proj3/Project3_CS61BYoW_CS61BSpring2021.pdf) | [Design Doc](./proj3/byow-design.md)
 
 ## Discussion
